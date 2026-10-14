@@ -1,0 +1,25 @@
+# Dependencies & build output
+node_modules
+dist
+dist-ssr
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.local
+
+# Generated art candidates (only the optimised picks in src/assets/art are committed)
+art-candidates/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.sw?

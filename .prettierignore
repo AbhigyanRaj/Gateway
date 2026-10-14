@@ -1,0 +1,5 @@
+dist
+node_modules
+art-candidates
+src/assets/art
+package-lock.json
