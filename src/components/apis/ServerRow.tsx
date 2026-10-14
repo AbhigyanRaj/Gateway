@@ -47,7 +47,11 @@ export function ServerRow({ entry, result, onDetails, className }: ServerRowProp
         </div>
       </div>
       <div className="flex shrink-0 flex-wrap gap-3">
-        <Button size="sm" onClick={() => void copy(entry.healthUrl, 'Health URL copied')}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => void copy(entry.healthUrl, 'Health URL copied')}
+        >
           {copied ? (
             <Check aria-hidden="true" strokeWidth={2} />
           ) : (
@@ -56,7 +60,7 @@ export function ServerRow({ entry, result, onDetails, className }: ServerRowProp
           {copied ? 'Copied' : 'Copy health URL'}
         </Button>
         <Button
-          variant="soft"
+          variant="ghost"
           size="sm"
           aria-label={`${entry.name} details`}
           onClick={() => onDetails(entry.id)}

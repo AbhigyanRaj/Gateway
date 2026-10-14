@@ -91,7 +91,6 @@ export default function ApisPage() {
                 value={filter}
                 onChange={setFilter}
                 label="Filter APIs"
-                layoutId="apis-filter-pill"
               />
             </div>
           </PageHero>

@@ -53,7 +53,7 @@ function CardArt({ entry, index }: { entry: ApiEntry; index: number }) {
 function CopyButton({ label, value }: { label: string; value: string }) {
   const { copied, copy } = useCopy()
   return (
-    <Button size="md" onClick={() => void copy(value, `${label} copied`)}>
+    <Button variant="outline" size="sm" onClick={() => void copy(value, `${label} copied`)}>
       {copied ? (
         <Check aria-hidden="true" strokeWidth={2} />
       ) : (
@@ -104,9 +104,9 @@ export function ApiCard({ entry, result, index, onDetails, className, style }: A
         </p>
       </div>
 
-      <div className="mt-auto flex flex-wrap justify-center gap-3 md:max-lg:[&>*]:px-4 md:max-lg:[&>*]:text-nav">
+      <div className="mt-auto flex flex-wrap justify-center gap-3 md:max-lg:[&>*]:px-4">
         {entry.consoleUrl ? (
-          <Button asChild size="md">
+          <Button asChild variant="outline" size="sm">
             <ExternalLink href={entry.consoleUrl}>
               {entry.consoleLabel ?? 'Open console'}
               <ArrowUpRight aria-hidden="true" strokeWidth={1.75} />
@@ -116,8 +116,8 @@ export function ApiCard({ entry, result, index, onDetails, className, style }: A
           <CopyButton label="Base URL" value={entry.baseUrl} />
         )}
         <Button
-          variant="soft"
-          size="md"
+          variant="ghost"
+          size="sm"
           aria-label={`${entry.name} details`}
           onClick={() => onDetails(entry.id)}
         >

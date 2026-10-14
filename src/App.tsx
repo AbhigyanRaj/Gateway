@@ -1,6 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { lazy, Suspense } from 'react'
-import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from 'react-router'
+import { lazy, Suspense, useEffect, useRef } from 'react'
+import {
+  createBrowserRouter,
+  Outlet,
+  RouterProvider,
+  ScrollRestoration,
+  useLocation,
+} from 'react-router'
 
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
@@ -16,10 +22,28 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
 const queryClient = new QueryClient()
 
 /**
+ * After a client-side route change, move focus to <main> so screen readers
+ * land on the new page and the clicked nav link doesn't keep focus (an arrow
+ * key would otherwise rove to the next header link and show its ring).
+ * The initial load is left alone so the skip link stays the first Tab stop.
+ */
+function useFocusMainOnNavigate() {
+  const { pathname } = useLocation()
+  const last = useRef(pathname)
+  useEffect(() => {
+    if (last.current === pathname) return
+    last.current = pathname
+    const main = document.getElementById('main')
+    if (main && !main.contains(document.activeElement)) main.focus({ preventScroll: true })
+  }, [pathname])
+}
+
+/**
  * Root layout. <main> is the page "sheet": it sits above the footer (z-1) and
  * ends in a rounded cap that overlaps the footer by 16px.
  */
 function RootLayout() {
+  useFocusMainOnNavigate()
   return (
     <>
       <SkipLink />

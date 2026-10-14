@@ -123,7 +123,6 @@ export default function StatusPage() {
               value={filter}
               onChange={setFilter}
               label="Filter services"
-              layoutId="status-filter-pill"
               variant="segmented"
               className="self-start md:self-auto"
             />
