@@ -21,6 +21,16 @@
  *   OPENAI_IMAGE_MODELS=a,b               optional override (comma list, used round-robin)
  *   GEMINI_IMAGE_MODEL=gemini-3-pro-image optional override
  *
+ * Tile slots re-render the approved tiles (their `ref`, an earlier candidate in art-candidates/)
+ * through OpenAI /images/edits with a transparent background, so they sit cleanly on any
+ * surface. They are OpenAI-only because Gemini has no alpha output. A product without an
+ * approved tile yet (`tileRef` unset) first gets tiles on white from the original tile prompt;
+ * set `tileRef` to the chosen one and re-run to make the transparent version.
+ *
+ * Products added later (`styleRef` set) are generated as edits of an approved card, so they
+ * inherit its composition, ring-and-line motif and lighting; `glyphs`/`emblems` hold variants
+ * that alternate across candidates.
+ *
  * Output: art-candidates/<slot>/<provider>[-<tag>]-<i>.png plus a .json sidecar
  * (model, size, prompt) next to each image. Gemini returns JPEG; it is re-encoded
  * losslessly to PNG so every candidate has the same format.
@@ -56,6 +66,7 @@ const PRODUCTS = {
       'to saturated warm orange #F9730C at the bottom, with a gentle lighter radial glow behind the centre',
     tile: 'warm orange #F9730C to amber #FEB12B',
     emblem: 'a rounded picture frame with a four-pointed sparkle star inside it',
+    tileRef: 'tile-studio/openai-1.png',
     glyph:
       'a rounded-square picture frame (thick, soft, pillowy border with generously rounded corners, ' +
       'landscape proportion) with a single four-pointed sparkle star floating in the middle of the frame',
@@ -67,9 +78,54 @@ const PRODUCTS = {
       '#A5BBFC and a pale lavender glow at the bottom, with a gentle lighter radial glow behind the centre',
     tile: 'indigo #556ADC to periwinkle #A5BBFC',
     emblem: 'a rounded phone handset flanked left and right by concentric sound-wave arcs',
+    tileRef: 'tile-voice/openai-1.png',
     glyph:
       'a smooth rounded classic telephone handset standing perfectly upright (not tilted), mirrored on its ' +
       'left and right by three concentric sound-wave arcs that grow outward',
+  },
+  minicrm: {
+    name: 'MiniCRM',
+    field:
+      'a warm GOLDEN AMBER field: light golden #FFCB79 near the top, deepening smoothly through amber #FEB12B ' +
+      'to rich golden ochre #DF9C2A at the bottom (a clear golden yellow, distinctly not orange), with a gentle ' +
+      'lighter radial glow behind the centre',
+    tile: 'light golden #FFCB79 to amber #FEB12B and golden ochre #DF9C2A',
+    styleRef: 'product-voice/openai-r2-1.png',
+    // Chosen: contact card with trend line (reads cleaner than the kanban as milk glass).
+    emblem: 'a rounded contact card with a small circle and a small upward trend line',
+    tileRef: 'tile-minicrm/openai-new-2.png',
+    glyphs: [
+      'a simple rounded kanban board: a soft rounded-rectangle board holding three rounded vertical columns, ' +
+        'each column containing two or three small rounded card tiles of slightly different heights',
+      'a rounded contact card (soft rounded rectangle, landscape) with a small plain circle on its left half ' +
+        'and a small smooth upward trend line rising across its right half, ending in a tiny rounded arrowhead',
+    ],
+    emblems: [
+      'a simple kanban board: three rounded vertical columns holding small rounded cards',
+      'a rounded contact card with a small circle and a small upward trend line',
+    ],
+  },
+  leadhub: {
+    name: 'LeadHub',
+    field:
+      'a soft CORAL field: soft coral #EBA18F near the top, deepening smoothly through coral #DB715C to warm ' +
+      'brick red #C43D2B at the bottom (coral red, distinctly not pink), with a gentle lighter radial glow ' +
+      'behind the centre',
+    tile: 'soft coral #EBA18F to coral #DB715C and warm brick red #C43D2B',
+    styleRef: 'product-voice/openai-r2-1.png',
+    // Chosen: the 45-degree magnet (an upright magnet with dots read as the letter U).
+    emblem: 'a horseshoe magnet tilted 45 degrees with banded pole tips facing the upper right and three small dots near the poles',
+    tileRef: 'tile-leadhub/openai-new2-2.png',
+    glyphs: [
+      'a rounded funnel (wide rounded rim at the top, narrowing smoothly to a short rounded spout at the ' +
+        'bottom) with three small glossy spheres dropping into its top in a gentle column; nothing below the spout',
+      'a chunky rounded horseshoe magnet tilted 45 degrees so its two rounded pole tips face the upper right ' +
+        '(it must read clearly as a magnet, never as a letter), with three small glossy spheres floating toward the poles',
+    ],
+    emblems: [
+      'a funnel with three small dots dropping into its top, nothing below the spout',
+      'a horseshoe magnet tilted 45 degrees with its poles facing the upper right and three small dots near the poles',
+    ],
   },
   tcc: {
     name: 'TCC Video Verification',
@@ -78,6 +134,7 @@ const PRODUCTS = {
       'at the bottom (stay green and mint, no blue), with a gentle lighter radial glow behind the centre',
     tile: 'sage green #83C040 to soft mint',
     emblem: 'a rounded shield containing a play triangle with a small check mark',
+    tileRef: 'tile-tcc/openai-1.png',
     glyph:
       'a rounded soft shield with an embossed rounded play-triangle in its centre and a small circular ' +
       'check-mark badge sitting at the bottom tip of the shield',
@@ -89,6 +146,7 @@ const PRODUCTS = {
       'peach glow at the bottom, with a gentle lighter radial glow behind the centre',
     tile: 'rose #E380A8 to light blush pink',
     emblem: 'a rounded speech bubble with a small tail, containing three small round dots in a row',
+    tileRef: 'tile-marathon/openai-r4-1.png',
     glyph:
       'a rounded speech bubble (soft pill-like rounded rectangle with a small rounded tail) floating above ' +
       'a gentle winding path; the path is drawn in thin glowing white line-art as two mirror-symmetric edges ' +
@@ -109,6 +167,26 @@ const productPrompt = (p) =>
   `one third of the frame height, perfectly centred horizontally and vertically, with calm generous negative ` +
   `space around it. Soft diffuse studio lighting from above. ${NEGATIVE}`;
 
+/** A new card in the approved family: an edit of an approved card (the reference image). */
+const newCardPrompt = (p, glyph) =>
+  `Using this image as the exact style reference, create a new card for the same series. Keep exactly the ` +
+  `same composition and framing, the same faint hairline white line-art motif (four or five thin concentric ` +
+  `circles centred on the glyph plus long, gently curved lines sweeping out to the left and right edges as a ` +
+  `mirror image), the same soft diffuse lighting from above, the same very soft shadow, the same fine film ` +
+  `grain, and the same glyph size (about one third of the frame height) and centred position. Replace the ` +
+  `glyph with: ${glyph}. Render it in exactly the same soft, white, glossy, translucent milk-glass / porcelain ` +
+  `material, with smooth rounded edges, gentle inner glow and delicate specular highlights. Change the ` +
+  `background gradient to ${p.field}. ${NEGATIVE}`;
+
+/** Re-render an approved tile (sent as the reference image) on a transparent background. */
+const tileTransparentPrompt = (p) =>
+  `Re-render this exact app-icon tile on a fully transparent background. Keep everything identical: the same ` +
+  `rounded-square (squircle) shape and proportions, the same ${p.tile} frosted glossy glass gradient, the glossy ` +
+  `top highlight, the soft inner glow and depth, and the same embossed soft-white emblem (${p.emblem}). Remove ` +
+  `the white backdrop entirely so only the tile remains, surrounded by transparent pixels, with at most a very ` +
+  `soft, subtle contact shadow directly beneath the tile. ${NEGATIVE}`;
+
+/** Original text-to-image tile prompt (used to create the approved tiles on white). */
 const tilePrompt = (p) =>
   `${GLOBAL_STYLE} A single app-icon style rounded square tile (squircle), viewed straight-on, centred, filling ` +
   `about 80% of the frame. The tile is frosted glass with glossy depth, filled with a soft vertical ${p.tile} ` +
@@ -122,18 +200,33 @@ const tilePrompt = (p) =>
 // ---------------------------------------------------------------------------
 const SLOTS = {};
 for (const [key, p] of Object.entries(PRODUCTS)) {
-  SLOTS[`product-${key}`] = {
-    prompt: productPrompt(p),
-    openai: ['2048x1280', '1536x1024'],
-    gemini: { aspectRatio: '16:9', imageSize: '2K' },
-  };
+  SLOTS[`product-${key}`] = p.styleRef
+    ? {
+        prompts: p.glyphs.map((g) => newCardPrompt(p, g)),
+        ref: p.styleRef,
+        openai: ['2048x1280'],
+        gemini: { aspectRatio: '16:9', imageSize: '2K' },
+      }
+    : {
+        prompt: productPrompt(p),
+        openai: ['2048x1280', '1536x1024'],
+        gemini: { aspectRatio: '16:9', imageSize: '2K' },
+      };
 }
 for (const [key, p] of Object.entries(PRODUCTS)) {
-  SLOTS[`tile-${key}`] = {
-    prompt: tilePrompt(p),
-    openai: ['1024x1024'],
-    gemini: { aspectRatio: '1:1', imageSize: '2K' },
-  };
+  SLOTS[`tile-${key}`] = p.tileRef
+    ? {
+        prompt: tileTransparentPrompt(p),
+        ref: p.tileRef,
+        openai: ['1024x1024'],
+        openaiParams: { background: 'transparent' },
+        providers: ['openai'],
+      }
+    : {
+        prompts: (p.emblems ?? [p.emblem]).map((emblem) => tilePrompt({ ...p, emblem })),
+        openai: ['1024x1024'],
+        providers: ['openai'],
+      };
 }
 SLOTS['showcase-studio'] = {
   prompt:
@@ -220,14 +313,12 @@ async function pool(tasks, limit) {
 // ---------------------------------------------------------------------------
 const OPENAI = 'https://api.openai.com/v1';
 const GEMINI = 'https://generativelanguage.googleapis.com/v1beta';
-const openaiHeaders = () => ({
-  Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-  'Content-Type': 'application/json',
-});
+const openaiAuth = () => ({ Authorization: `Bearer ${process.env.OPENAI_API_KEY}` });
+const openaiHeaders = () => ({ ...openaiAuth(), 'Content-Type': 'application/json' });
 const geminiHeaders = () => ({ 'x-goog-api-key': process.env.GEMINI_API_KEY, 'Content-Type': 'application/json' });
 
 async function listOpenAIImageModels() {
-  const r = await fetch(`${OPENAI}/models`, { headers: openaiHeaders() });
+  const r = await fetch(`${OPENAI}/models`, { headers: openaiAuth() });
   if (!r.ok) throw new ApiError(r.status, `OpenAI /models ${r.status}`);
   const { data } = await r.json();
   return data.filter((m) => /^gpt-image-/.test(m.id));
@@ -271,14 +362,25 @@ async function resolveGeminiModels() {
   return preferred.filter((m) => available.has(m));
 }
 
-async function openaiGenerate(model, prompt, sizes) {
+/** Text-to-image, or an edit of `ref` (path under art-candidates/) when given. */
+async function openaiGenerate(model, prompt, sizes, { ref, params = {} } = {}) {
+  const refBuffer = ref ? await fs.readFile(path.join(OUT_DIR, ref)) : null;
   let lastErr;
   for (const size of sizes) {
-    const r = await fetch(`${OPENAI}/images/generations`, {
-      method: 'POST',
-      headers: openaiHeaders(),
-      body: JSON.stringify({ model, prompt, size, quality: 'high', output_format: 'png', n: 1 }),
-    });
+    const fields = { model, prompt, size, quality: 'high', output_format: 'png', n: 1, ...params };
+    let r;
+    if (refBuffer) {
+      const form = new FormData();
+      for (const [k, v] of Object.entries(fields)) form.append(k, String(v));
+      form.append('image', new Blob([refBuffer], { type: 'image/png' }), path.basename(ref));
+      r = await fetch(`${OPENAI}/images/edits`, { method: 'POST', headers: openaiAuth(), body: form });
+    } else {
+      r = await fetch(`${OPENAI}/images/generations`, {
+        method: 'POST',
+        headers: openaiHeaders(),
+        body: JSON.stringify(fields),
+      });
+    }
     const j = await r.json().catch(() => ({}));
     if (r.ok) return { buffer: Buffer.from(j.data[0].b64_json, 'base64'), model, size };
     lastErr = new ApiError(r.status, `OpenAI ${model} ${size}: ${j.error?.message ?? r.statusText}`);
@@ -288,14 +390,19 @@ async function openaiGenerate(model, prompt, sizes) {
   throw lastErr;
 }
 
-async function geminiGenerate(models, prompt, imageConfig) {
+async function geminiGenerate(models, prompt, imageConfig, { ref } = {}) {
+  const parts = [{ text: prompt }];
+  if (ref) {
+    const png = await sharp(path.join(OUT_DIR, ref)).png().toBuffer();
+    parts.unshift({ inlineData: { mimeType: 'image/png', data: png.toString('base64') } });
+  }
   let lastErr;
   for (const model of models) {
     const r = await fetch(`${GEMINI}/models/${model}:generateContent`, {
       method: 'POST',
       headers: geminiHeaders(),
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: [{ role: 'user', parts }],
         generationConfig: { responseModalities: ['IMAGE'], imageConfig },
       }),
     });
@@ -336,7 +443,7 @@ const tag = flag('tag', '');
 const concurrency = Number(flag('concurrency', 5));
 
 if (flag('list')) {
-  for (const id of slotIds) console.log(`\n[${id}]\n${SLOTS[id].prompt}`);
+  for (const id of slotIds) console.log(`\n[${id}]\n${(SLOTS[id].prompts ?? [SLOTS[id].prompt]).join('\n---\n')}`);
   process.exit(0);
 }
 if (!process.env.OPENAI_API_KEY || !process.env.GEMINI_API_KEY) {
@@ -363,6 +470,7 @@ const jobs = { openai: [], gemini: [] };
 for (const id of slotIds) {
   const slot = SLOTS[id];
   for (let i = 1; i <= n; i++) {
+    const prompt = slot.prompts ? slot.prompts[(i - 1) % slot.prompts.length] : slot.prompt;
     const file = path.join(OUT_DIR, id, `%p${tag ? `-${tag}` : ''}-${i}.png`);
     const save = async (provider, res) => {
       const out = file.replace('%p', provider);
@@ -370,7 +478,11 @@ for (const id of slotIds) {
       await fs.writeFile(out, res.buffer);
       await fs.writeFile(
         out.replace(/\.png$/, '.json'),
-        JSON.stringify({ slot: id, provider, model: res.model, size: res.size, prompt: slot.prompt }, null, 2),
+        JSON.stringify(
+          { slot: id, provider, model: res.model, size: res.size, ref: slot.ref ?? null, prompt },
+          null,
+          2,
+        ),
       );
       const meta = await sharp(res.buffer).metadata();
       console.log(`  ok ${path.relative(ROOT, out)}  ${res.model}  ${meta.width}x${meta.height}`);
@@ -380,19 +492,21 @@ for (const id of slotIds) {
       console.error(`  FAIL ${label}: ${err.message.slice(0, 240)}`);
       return null;
     };
-    if (openaiModels.length) {
+    const allowed = (p) => !slot.providers || slot.providers.includes(p);
+    if (openaiModels.length && allowed('openai')) {
       const model = openaiModels[(i - 1) % openaiModels.length];
       const label = `${id} openai-${i}`;
+      const opts = { ref: slot.ref, params: slot.openaiParams };
       jobs.openai.push(() =>
-        withRetry(() => openaiGenerate(model, slot.prompt, slot.openai), label)
+        withRetry(() => openaiGenerate(model, prompt, slot.openai, opts), label)
           .then((res) => save('openai', res))
           .catch(fail(label)),
       );
     }
-    if (geminiModels.length) {
+    if (geminiModels.length && allowed('gemini')) {
       const label = `${id} gemini-${i}`;
       jobs.gemini.push(() =>
-        withRetry(() => geminiGenerate(geminiModels, slot.prompt, slot.gemini), label)
+        withRetry(() => geminiGenerate(geminiModels, prompt, slot.gemini, { ref: slot.ref }), label)
           .then((res) => save('gemini', res))
           .catch(fail(label)),
       );
