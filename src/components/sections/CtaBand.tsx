@@ -28,7 +28,7 @@ export function CtaBand() {
 
           <h2
             id="cta-title"
-            className="w-full max-w-[83%] text-center font-display text-[30px] leading-[1.45] font-hero tracking-[-0.01em] text-balance text-white md:text-heading-section md:leading-[1.5]"
+            className="w-full max-w-[83%] text-center font-display text-[30px] leading-[1.45] font-hero tracking-[-0.01em] text-balance text-white max-[359px]:max-w-none max-[359px]:text-[26px] md:text-heading-section md:leading-[1.5]"
           >
             <span className="md:block">Make something remarkable</span>{' '}
             <span className="md:block">with AI Creative Studio</span>

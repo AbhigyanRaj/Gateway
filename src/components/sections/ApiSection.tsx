@@ -229,7 +229,11 @@ export function ApiSection() {
       <SectionHeading
         id="apis-title"
         title={'Build on\nET AI APIs'}
-        intro="Base URLs, health checks and docs for every service, ready to call."
+        intro={
+          <span className="block text-balance">
+            Base URLs, health checks and docs for every service, ready to call.
+          </span>
+        }
       />
 
       <div className="grid w-full gap-2 lg:grid-cols-2">

@@ -235,7 +235,9 @@ export function ProductCard({ product, health, featured = false, className }: Pr
             <span className="sr-only">API base URL: {displayUrl(p.apiBase)}</span>
             <SplitUrl
               url={p.apiBase}
-              hostClassName="hidden @min-[15.5rem]:inline"
+              // Host only when host + path fit on one line in every card, so all
+              // link rows keep one 50px rhythm (otherwise the path alone).
+              hostClassName="hidden @min-[22.5rem]:inline"
               className="text-[13px] leading-5 tracking-normal"
             />
           </LinkRow>

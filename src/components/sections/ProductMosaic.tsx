@@ -123,7 +123,11 @@ export function ProductMosaic() {
       <SectionHeading
         id="explore-title"
         title={'Everything you need,\nin one place'}
-        intro="Consoles, docs and API endpoints for every product, with live health on each card."
+        intro={
+          <span className="block text-balance">
+            Consoles, docs and API endpoints for every product, with live health on each card.
+          </span>
+        }
       />
       <div
         ref={gridRef}

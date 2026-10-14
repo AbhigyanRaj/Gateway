@@ -57,10 +57,14 @@ export function StatusStrip() {
       <SectionHeading
         id="status-title"
         title={'Every service,\nchecked live'}
-        intro="Health checks run every 30 seconds from your browser."
+        intro={
+          <span className="block text-balance">
+            Health checks run every 30 seconds from your browser.
+          </span>
+        }
       />
 
-      <div className="grid w-full gap-10 rounded-2xl border border-st-secondary bg-white p-6 sm:p-8 md:p-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16">
+      <div className="grid w-full gap-10 rounded-2xl border border-st-secondary bg-white p-6 sm:p-8 md:p-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] xl:gap-16">
         {/* Overall */}
         <div className="flex flex-col justify-between gap-8">
           <div>
@@ -71,7 +75,7 @@ export function StatusStrip() {
                 pulse
               />
             </div>
-            <p className="mt-6 font-display text-[32px] leading-[1.1] font-hero tracking-[-0.02em] text-tx sm:text-[40px] md:text-metric md:leading-[1.1]">
+            <p className="mt-6 font-display text-[32px] leading-[1.1] font-hero tracking-[-0.02em] text-tx sm:text-[40px] md:text-metric md:leading-[1.1] lg:text-[40px] xl:text-metric">
               {checking ? (
                 <>
                   <Skeleton className="h-[0.8em] w-[1.6em] -translate-y-[0.06em] rounded-lg" />
@@ -127,7 +131,7 @@ export function StatusStrip() {
                   </span>
                   <span className="flex shrink-0 items-center gap-3 sm:gap-4">
                     <StatusChip status={status} size="sm" />
-                    <span className="text-caption whitespace-nowrap text-tx-tertiary tabular sm:min-w-20 sm:text-right sm:text-body sm:font-medium sm:text-tx">
+                    <span className="text-caption whitespace-nowrap text-tx-tertiary tabular sm:min-w-16 sm:text-right sm:text-body sm:font-medium sm:text-tx">
                       {r ? (
                         r.latencyMs === null ? (
                           <span className="text-caption font-regular text-tx-tertiary">

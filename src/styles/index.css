@@ -9,10 +9,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Metric-matched fallback so display text doesn't reflow when Newsreader loads. */
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia');
+  font-weight: 100 900;
+  size-adjust: 101.5%;
+}
+
 /* ---------- Theme (generates utilities + CSS variables) ---------- */
 @theme {
   /* Fonts */
-  --font-display: 'Newsreader Variable', 'Newsreader', Georgia, serif;
+  --font-display: 'Newsreader Variable', 'Newsreader', 'Newsreader Fallback', Georgia, serif;
   --font-sans: 'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 

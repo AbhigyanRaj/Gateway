@@ -21,7 +21,7 @@ interface LinkRowProps {
 const rowClass = cn(
   'group flex min-h-[50px] items-center justify-between gap-3 border-b border-st py-3 last:border-b-0',
   'text-body leading-[1.55] tracking-[-0.14px] text-tx-secondary',
-  'transition-colors duration-200 ease-standard hover:text-tx focus-visible:text-tx',
+  'transition-colors duration-200 ease-standard hover:text-tx focus-visible:rounded-md focus-visible:text-tx',
 )
 
 function Arrow({ external }: { external: boolean }) {

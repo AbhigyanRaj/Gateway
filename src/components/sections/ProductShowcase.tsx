@@ -40,7 +40,8 @@ export function ProductShowcase() {
       reveal="scale"
       contained={false}
       aria-labelledby="products-title"
-      className="w-full scroll-mt-6 overflow-x-clip"
+      // md+: pulled up into the hero (kit rhythm) so the marquee doesn't float in a void.
+      className="w-full scroll-mt-6 overflow-x-clip md:-mt-20"
     >
       {/* Periwinkle wings behind the frame (md+, clipped to the viewport). */}
       <div

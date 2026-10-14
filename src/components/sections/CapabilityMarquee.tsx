@@ -9,11 +9,11 @@ const capabilities: readonly Capability[] = [
   { label: 'Image generation', product: 'studio' },
   { label: 'Creative variations', product: 'studio' },
   { label: 'AI voice calls', product: 'voice' },
-  { label: 'Telephony and CRM sync', product: 'voice' },
+  { label: 'Pipeline and lead tracking', product: 'minicrm' },
+  { label: 'Lead capture and routing', product: 'leadhub' },
   { label: 'Multilingual speech-to-text', product: 'tcc' },
   { label: 'AI video verdicts', product: 'tcc' },
   { label: 'Knowledge-base chat', product: 'marathon' },
-  { label: 'Grounded answers', product: 'marathon' },
   { label: 'REST APIs', glyph: Braces },
   { label: 'Live health checks', glyph: Activity },
 ]
@@ -63,7 +63,7 @@ function CapabilityList({ hidden = false }: { hidden?: boolean }) {
  */
 export function CapabilityMarquee() {
   return (
-    <div className="relative z-10 flex w-full flex-col items-center gap-5 pb-8 md:gap-8 md:pb-10 [@media(max-height:740px)]:md:gap-5 [@media(max-height:740px)]:md:pb-8 [@media(min-height:741px)_and_(max-height:820px)]:md:gap-6 [@media(min-height:741px)_and_(max-height:820px)]:md:pb-8">
+    <div className="relative z-10 flex w-full flex-col items-center gap-5 pb-8 md:gap-8 md:pb-10 [@media(max-height:700px)]:max-md:gap-4 [@media(max-height:700px)]:max-md:pb-6 [@media(max-height:740px)]:md:gap-5 [@media(max-height:740px)]:md:pb-8 [@media(min-height:741px)_and_(max-height:820px)]:md:gap-6 [@media(min-height:741px)_and_(max-height:820px)]:md:pb-8">
       <p className="eyebrow text-tx-secondary">What you can do</p>
       <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
         <div className="flex w-max animate-marquee will-change-transform [animation-duration:60s] hover:[animation-play-state:paused]">

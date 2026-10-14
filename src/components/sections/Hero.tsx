@@ -38,7 +38,7 @@ function HeroStatusPill() {
     <Link
       to="/status"
       className={cn(
-        'group relative mt-6 inline-flex h-9 max-w-full min-w-[min(100%,19rem)] items-center justify-center gap-2.5 rounded-full border border-st bg-white/60 pr-3.5 pl-4 md:mt-8 [@media(max-height:740px)]:md:mt-4 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-5',
+        'group relative mt-6 inline-flex h-9 max-w-full min-w-[min(100%,19rem)] items-center justify-center gap-2.5 rounded-full border border-st bg-white/60 pr-3.5 pl-4 md:mt-8 [@media(max-height:700px)]:max-md:mt-4 [@media(max-height:740px)]:md:mt-4 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-5',
         'text-[13px] leading-none text-tx-secondary backdrop-blur-md md:text-sm',
         'transition-[background-color,color,border-color] duration-200 ease-standard hover:border-st hover:bg-white/90 hover:text-tx',
         // Extend the hit area to 44px without growing the visual pill.
@@ -69,13 +69,14 @@ function HeroStatusPill() {
  * float in an arc around the headline, and a warm horizon glow rises from
  * below the copy. A flexible horizon band absorbs spare height so the copy
  * stays centred and the marquee is pinned to the bottom of the first screen.
- * Short screens compress spacing (and the orbit) instead of overflowing.
+ * Short screens (laptops and small phones) compress spacing, and the orbit on
+ * md+, instead of overflowing.
  */
 export function Hero() {
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-svh flex-col overflow-x-clip pt-24 md:pt-28 [@media(max-height:740px)]:md:pt-24"
+      className="relative isolate flex min-h-svh flex-col overflow-x-clip pt-24 md:pt-28 [@media(max-height:700px)]:max-md:pt-20 [@media(max-height:740px)]:md:pt-24"
     >
       <HeroTopWash />
       <HeroGlow />
@@ -89,7 +90,7 @@ export function Hero() {
           className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-72 w-72 -translate-x-1/2 -translate-y-1/2 bg-(image:--gradient-hero-glow) opacity-30 blur-[80px] md:h-[400px] md:w-[640px] md:opacity-35 md:blur-[100px]"
         />
 
-        <HeroTileRow className="mb-6" />
+        <HeroTileRow className="mb-6 [@media(max-height:700px)]:mb-4" />
 
         <p className="inline-flex h-8 items-center gap-2 rounded-full bg-white/70 pr-3.5 pl-2.5 text-[13px] leading-none text-tx-secondary shadow-[0_1px_2px_rgb(30_32_51/0.04)] ring-1 ring-st backdrop-blur-md md:text-sm">
           <Emblem className="size-4 text-orange-700" />
@@ -101,19 +102,19 @@ export function Hero() {
 
         <h1
           id="hero-title"
-          className="mt-5 max-w-4xl h-hero max-[359px]:text-[38px] md:mt-7 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6"
+          className="mt-5 max-w-4xl h-hero max-[359px]:text-[38px] md:mt-7 [@media(max-height:700px)]:max-md:mt-4 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6"
         >
           <span className="block">Every ET AI tool,</span>
           <span className="block">one front door</span>
         </h1>
 
-        <p className="mt-2.5 max-w-2xl text-lead text-pretty md:mt-3.5 [@media(max-height:740px)]:md:mt-2.5">
+        <p className="mt-2.5 max-w-2xl text-lead text-balance md:mt-3.5 [@media(max-height:740px)]:md:mt-2.5">
           Create, call, verify and converse with ET AI.
           <br className="hidden md:block" /> Launch any product, explore its APIs and check live
           status.
         </p>
 
-        <div className="mt-5 flex flex-wrap justify-center gap-3 sm:gap-4 md:mt-8 md:gap-5 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6">
+        <div className="mt-5 flex flex-wrap justify-center gap-3 sm:gap-4 md:mt-8 md:gap-5 [@media(max-height:700px)]:max-md:mt-4 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6">
           <Button variant="hero" size="hero" arrow asChild className={heroBtn}>
             <a href={studio.consoleUrl} target="_blank" rel="noopener noreferrer">
               <span className="sm:hidden">Open Studio</span>
@@ -131,7 +132,7 @@ export function Hero() {
         <HeroOrbit />
       </div>
 
-      <HeroHorizon className="min-h-24 flex-[1.6] md:min-h-40 [@media(max-height:740px)]:md:min-h-[100px] [@media(min-height:741px)_and_(max-height:820px)]:md:min-h-[120px]" />
+      <HeroHorizon className="min-h-24 flex-[1.6] md:min-h-40 [@media(max-height:700px)]:max-md:min-h-0 [@media(max-height:740px)]:md:min-h-[100px] [@media(min-height:741px)_and_(max-height:820px)]:md:min-h-[120px]" />
 
       <CapabilityMarquee />
     </section>

@@ -17,7 +17,8 @@ const year = new Date().getFullYear()
 /**
  * Site footer: brand column (wordmark, tagline, live status, legal box) and
  * four link columns, then the giant masked wordmark cut by the page edge.
- * Desktop: one row. Tablet: 3-column grid. Mobile: square hairline boxes.
+ * Desktop (xl+): one row. Tablet and small laptops: 3-column grid, so labels
+ * never squeeze onto two lines. Mobile: square hairline boxes.
  */
 export function SiteFooter() {
   const { aggregate } = useHealth()
@@ -27,9 +28,9 @@ export function SiteFooter() {
       id="site-footer"
       className="relative flex flex-col items-center gap-12 overflow-hidden border-t border-st-secondary bg-(image:--gradient-footer) pt-12 md:gap-24 md:pt-20"
     >
-      <div className="container-page grid gap-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12 lg:flex lg:gap-24">
+      <div className="container-page grid gap-10 md:grid-cols-3 md:gap-x-8 md:gap-y-12 xl:flex xl:gap-24">
         {/* Brand column */}
-        <div className="flex flex-col gap-8 md:row-span-2 md:gap-10 lg:w-[182px] lg:shrink-0">
+        <div className="flex flex-col gap-8 md:row-span-2 md:gap-10 xl:w-[182px] xl:shrink-0">
           <div className="flex flex-col gap-2.5">
             <Link to="/" aria-label="ET AI Labs home" className="-m-1 w-fit rounded-md p-1">
               <Wordmark className="text-[34.5px]" />
@@ -60,7 +61,7 @@ export function SiteFooter() {
         </div>
 
         {/* Link columns */}
-        <div className="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-2 md:gap-x-8 md:gap-y-12 lg:flex lg:flex-1 lg:justify-between lg:gap-8">
+        <div className="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-2 md:gap-x-8 md:gap-y-12 xl:flex xl:flex-1 xl:justify-between xl:gap-8">
           {footerColumns.map((col) => (
             <FooterCol key={col.title} column={col} />
           ))}

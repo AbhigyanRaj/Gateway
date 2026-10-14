@@ -14,36 +14,44 @@ function NewTabHint() {
   return <span className="sr-only"> (opens in a new tab)</span>
 }
 
-/** Primary + secondary actions for one product. */
+/**
+ * Primary + secondary actions for one product. Calm by design: the primary is
+ * a white hairline pill (ink is reserved for page-level CTAs) and the
+ * secondary a ghost pill.
+ */
 function PanelActions({ product }: { product: Product }) {
   const { id, kind, consoleUrl, consoleLabel, docsUrl } = product
+  // Below 360px the pair stacks full width (as the hero buttons do).
+  const primary =
+    'shadow-btn-outline hover:bg-white hover:shadow-[inset_0_0_0_1px_rgb(30_32_51/0.26)] max-[359px]:w-full'
+  const secondary = 'max-[359px]:w-full'
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="flex flex-wrap items-center gap-x-1 gap-y-2">
       {kind === 'console' && consoleUrl ? (
-        <Button variant="ink" size="md" arrow asChild>
+        <Button variant="outline" size="md" arrow asChild className={primary}>
           <a href={consoleUrl} target="_blank" rel="noopener noreferrer">
             {consoleLabel ?? 'Open console'}
             <NewTabHint />
           </a>
         </Button>
       ) : (
-        <Button variant="ink" size="md" arrow asChild>
+        <Button variant="outline" size="md" arrow asChild className={primary}>
           <Link to={`/apis#${id}`}>View API</Link>
         </Button>
       )}
       {docsUrl ? (
-        <Button variant="soft" size="md" asChild>
+        <Button variant="ghost" size="md" asChild className={secondary}>
           <a href={docsUrl} target="_blank" rel="noopener noreferrer">
             API docs
             <NewTabHint />
           </a>
         </Button>
       ) : kind === 'console' ? (
-        <Button variant="soft" size="md" asChild>
+        <Button variant="ghost" size="md" asChild className={secondary}>
           <Link to={`/apis#${id}`}>API details</Link>
         </Button>
       ) : (
-        <Button variant="soft" size="md" asChild>
+        <Button variant="ghost" size="md" asChild className={secondary}>
           <Link to="/status">Service status</Link>
         </Button>
       )}
