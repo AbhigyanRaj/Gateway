@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ET AI Labs — design system
+   ET AI Labs: design system
    Tokens ported from the design kit (tokens/tokens.css + tailwind.config.js)
    into a Tailwind v4 @theme. Every utility below maps 1:1 to a kit token.
    ========================================================================== */
@@ -17,11 +17,11 @@
     'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Weights — the system uses non-standard variable weights */
+  /* Weights: the system uses non-standard variable weights */
   --font-weight-regular: 425;
   --font-weight-medium: 525;
   --font-weight-semibold: 600;
-  --font-weight-display: 380;
+  --font-weight-hero: 380;
   --font-weight-display-medium: 450;
 
   /* Type scale */
@@ -37,8 +37,6 @@
   --text-body--line-height: 1.6;
   --text-body-lg: 18px;
   --text-body-lg--line-height: 1.65;
-  --text-lead: 20px;
-  --text-lead--line-height: 1.75;
   --text-heading-card: 20px;
   --text-heading-card--line-height: 1.3;
   --text-heading-card--letter-spacing: -0.015em;
@@ -192,6 +190,7 @@
   --color-hover-indigo: #6366f1;
   --color-hover-green: #16a34a;
   --color-hover-pink: #db2777;
+  --color-hover-yellow: #ca8a04;
   --color-hover-red: #dc2626;
 
   /* Radius (Tailwind defaults xs–4xl already match the kit) */
@@ -412,6 +411,10 @@
   --gradient-pink-light: linear-gradient(180deg, #fcd9e4 0%, #ddc4cf 100%);
   --gradient-green: linear-gradient(180deg, #89b95b 0%, #293a18 100%);
   --gradient-green-light: linear-gradient(180deg, #dceace 0%, #cacec5 100%);
+  --gradient-yellow: linear-gradient(180deg, #ffcb79 0%, #c08827 100%);
+  --gradient-yellow-light: linear-gradient(180deg, #fff8e6 0%, #ffe8b7 100%);
+  --gradient-red: linear-gradient(180deg, #eba18f 0%, #a21913 100%);
+  --gradient-red-light: linear-gradient(180deg, #fde7e2 0%, #f8d1c6 100%);
   --gradient-blue: linear-gradient(180deg, #bed2ff 0%, #393cc1 100%);
   --gradient-blue-light: linear-gradient(180deg, #f4f7ff 0%, #bed2ff 100%);
 
@@ -519,7 +522,7 @@
 
 @utility h-hero {
   font-family: var(--font-display);
-  font-weight: var(--font-weight-display);
+  font-weight: var(--font-weight-hero);
   font-size: var(--text-hero-sm);
   line-height: 1.05;
   letter-spacing: var(--tracking-hero);
@@ -572,7 +575,7 @@
   line-height: 1.75;
   color: var(--color-tx-secondary);
   @media (width >= 48rem) {
-    font-size: var(--text-lead);
+    font-size: 20px;
   }
 }
 

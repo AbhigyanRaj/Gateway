@@ -1,4 +1,4 @@
-<!-- nument hero "sunrise" gradient. Recreated from the measured values of sarvam.ai's hero:
+<!-- ET AI Labs hero "sunrise" glow (from the design kit measurements):
      a blurred half-disc whose radial gradient goes orange core -> amber ring -> periwinkle -> near-white.
      Place it absolutely at the top-centre of the hero, ~3244px wide, translated so only the
      lower rim is visible (see components/hero.html). Do not stretch the aspect ratio. -->

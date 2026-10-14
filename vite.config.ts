@@ -9,10 +9,12 @@ import { defineConfig } from 'vite'
 const LIVE_ORIGIN = 'https://etaiprod.indiatimes.com'
 const proxiedPaths = [
   '/health',
-  '/marathon/health',
-  '/tcc/health',
+  '/studio/',
   '/voice/api/health',
-  '/studio/api/v1',
+  '/minicrm/api/health',
+  '/leadhub/healthz',
+  '/tcc/health',
+  '/marathon/health',
 ]
 
 export default defineConfig({

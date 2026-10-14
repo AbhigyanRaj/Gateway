@@ -27,6 +27,7 @@ export interface Service {
   id: ServiceId
   name: string
   healthPath: string
+  healthKind: 'json' | 'page'
   authRequired: boolean
 }
 
@@ -36,9 +37,16 @@ export const services: readonly Service[] = [
     id: p.id,
     name: p.name,
     healthPath: p.healthPath,
+    healthKind: p.healthKind,
     authRequired: p.authRequired,
   })),
-  { id: 'server', name: serverHealth.name, healthPath: serverHealth.healthPath, authRequired: false },
+  {
+    id: 'server',
+    name: serverHealth.name,
+    healthPath: serverHealth.healthPath,
+    healthKind: 'json',
+    authRequired: false,
+  },
 ]
 
 export const TIMEOUT_MS = 8000
@@ -52,10 +60,23 @@ const yes = (ok: boolean) => (ok ? 'Healthy' : 'Not ready')
 /** Pick only safe, meaningful facts from each payload. */
 function curate(id: ServiceId, body: unknown, httpStatus: number): HealthDetail[] {
   if (id === 'studio') {
-    const enforced = httpStatus === 401 || httpStatus === 403
-    return [{ label: 'Authentication', value: enforced ? 'Enforced' : 'Open', ok: enforced }]
+    const up = httpStatus >= 200 && httpStatus < 400
+    return [
+      { label: 'Console', value: up ? 'Serving' : 'Not responding', ok: up },
+      { label: 'API access', value: 'Sign-in required' },
+    ]
   }
   if (!isObj(body)) return []
+  if (id === 'minicrm') {
+    const version = typeof body.version === 'string' ? body.version : null
+    return [
+      { label: 'API', value: yes(body.ok === true), ok: body.ok === true },
+      ...(version ? [{ label: 'Version', value: version }] : []),
+    ]
+  }
+  if (id === 'leadhub') {
+    return [{ label: 'App server', value: yes(body.ok === true), ok: body.ok === true }]
+  }
   if (id === 'voice' && isObj(body.checks)) {
     const c = body.checks
     return [
@@ -129,19 +150,27 @@ export async function checkService(service: Service, signal?: AbortSignal): Prom
     const res = await fetch(service.healthPath, {
       cache: 'no-store',
       credentials: 'omit',
-      headers: { Accept: 'application/json' },
+      headers: { Accept: service.healthKind === 'page' ? 'text/html' : 'application/json' },
       signal: controller.signal,
     })
     const latencyMs = Math.round(performance.now() - started)
     let body: unknown = null
-    try {
-      body = await res.json()
-    } catch {
-      body = null
+    if (service.healthKind === 'json') {
+      try {
+        body = await res.json()
+      } catch {
+        body = null
+      }
+    } else {
+      // Drain the page body without parsing it.
+      await res.arrayBuffer().catch(() => undefined)
     }
 
     const authGate = service.authRequired && (res.status === 401 || res.status === 403)
-    const ok = res.ok && isObj(body) && body.status === 'ok'
+    const ok =
+      service.healthKind === 'page'
+        ? res.ok
+        : res.ok && isObj(body) && (body.status === 'ok' || body.ok === true)
     let status: HealthStatus
     let note: string | undefined
     if (authGate) {
@@ -173,7 +202,10 @@ export async function checkService(service: Service, signal?: AbortSignal): Prom
       details: curate(service.id, body, res.status),
       note,
     }
-  } catch {
+  } catch (error) {
+    // Cancelled by the caller (React Query unmount/refetch): not a real result.
+    // Rethrow so it is discarded and never recorded as an outage.
+    if (signal?.aborted) throw error
     const timedOut = performance.now() - started >= TIMEOUT_MS - 50
     return {
       id: service.id,

@@ -15,7 +15,7 @@ export function useCopy() {
       window.clearTimeout(timer.current)
       timer.current = window.setTimeout(() => setCopied(false), 1600)
     } catch {
-      toast.error('Could not copy — select the text and copy manually')
+      toast.error('Could not copy. Select the text and copy it manually')
     }
   }, [])
 

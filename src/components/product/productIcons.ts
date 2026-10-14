@@ -1,11 +1,24 @@
-import { MessagesSquare, PhoneCall, ShieldCheck, Sparkles, type LucideIcon } from 'lucide-react'
+import {
+  AudioLines,
+  BotMessageSquare,
+  Magnet,
+  ScanEye,
+  SquareKanban,
+  WandSparkles,
+  type LucideIcon,
+} from 'lucide-react'
 
 import type { ProductId } from '@/data/products'
 
-/** One icon per product, used everywhere (menus, tabs, cards, rows). */
+/**
+ * Small line icons for tight inline spots only. For product identity
+ * (menus, tabs, cards, rows) use <ProductTile id /> instead.
+ */
 export const productIcons: Record<ProductId, LucideIcon> = {
-  studio: Sparkles,
-  voice: PhoneCall,
-  tcc: ShieldCheck,
-  marathon: MessagesSquare,
+  studio: WandSparkles,
+  voice: AudioLines,
+  minicrm: SquareKanban,
+  leadhub: Magnet,
+  tcc: ScanEye,
+  marathon: BotMessageSquare,
 }

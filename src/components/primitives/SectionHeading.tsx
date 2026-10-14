@@ -6,7 +6,7 @@ interface SectionHeadingProps {
   eyebrow?: string
   intro?: React.ReactNode
   align?: 'center' | 'left'
-  /** Heading level — h2 by default. */
+  /** Heading level, h2 by default. */
   as?: 'h1' | 'h2' | 'h3'
   id?: string
   className?: string
