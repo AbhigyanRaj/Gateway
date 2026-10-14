@@ -13,7 +13,7 @@ import { site } from '@/config/site'
 export default function HomePage() {
   return (
     <>
-      <title>{`${site.name} — Every ET AI product, one front door`}</title>
+      <title>{`${site.name} · Every ET AI product, one front door`}</title>
       <meta name="description" content={site.description} />
       <div className="flex flex-col gap-24 md:gap-44">
         {/* Hero renders the capability marquee at its foot (first viewport). */}
