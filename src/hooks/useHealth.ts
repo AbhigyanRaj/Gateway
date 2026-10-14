@@ -41,9 +41,10 @@ export function useHealth(): UseHealth {
       retry: false,
     })),
     combine: (queries) => {
-      const results = Object.fromEntries(
-        services.map((s, i) => [s.id, queries[i].data]),
-      ) as Record<ServiceId, HealthResult | undefined>
+      const results = Object.fromEntries(services.map((s, i) => [s.id, queries[i].data])) as Record<
+        ServiceId,
+        HealthResult | undefined
+      >
       return {
         results,
         aggregate: aggregate(queries.map((q) => q.data)),

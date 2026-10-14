@@ -81,7 +81,11 @@ function curate(id: ServiceId, body: unknown, httpStatus: number): HealthDetail[
     const c = body.checks
     return [
       { label: 'Database', value: yes(c.database === 'ok'), ok: c.database === 'ok' },
-      { label: 'Telephony', value: yes(c.telephony_configured === true), ok: c.telephony_configured === true },
+      {
+        label: 'Telephony',
+        value: yes(c.telephony_configured === true),
+        ok: c.telephony_configured === true,
+      },
       { label: 'CRM sync', value: yes(c.crm_configured === true), ok: c.crm_configured === true },
     ]
   }
@@ -91,7 +95,11 @@ function curate(id: ServiceId, body: unknown, httpStatus: number): HealthDetail[
     return [
       { label: 'Speech-to-text', value: yes(stt.configured === true), ok: stt.configured === true },
       { label: 'AI judge', value: yes(judge), ok: judge },
-      { label: 'Media processing', value: yes(typeof body.ffmpeg === 'string'), ok: typeof body.ffmpeg === 'string' },
+      {
+        label: 'Media processing',
+        value: yes(typeof body.ffmpeg === 'string'),
+        ok: typeof body.ffmpeg === 'string',
+      },
     ]
   }
   if (id === 'marathon') {
@@ -107,7 +115,11 @@ function curate(id: ServiceId, body: unknown, httpStatus: number): HealthDetail[
         label: 'Last refreshed',
         value: age === null ? 'Unknown' : age < 1 ? 'Within the hour' : `${Math.round(age)}h ago`,
       },
-      { label: 'Retrieval', value: yes(typeof body.retriever === 'string'), ok: typeof body.retriever === 'string' },
+      {
+        label: 'Retrieval',
+        value: yes(typeof body.retriever === 'string'),
+        ok: typeof body.retriever === 'string',
+      },
     ]
   }
   return []

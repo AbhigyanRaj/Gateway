@@ -1,4 +1,10 @@
-import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon } from 'lucide-react'
+import {
+  CircleCheckIcon,
+  InfoIcon,
+  Loader2Icon,
+  OctagonXIcon,
+  TriangleAlertIcon,
+} from 'lucide-react'
 import { Toaster as Sonner, type ToasterProps } from 'sonner'
 
 /** Kit-styled toasts: white card, hairline border, pill-soft radius, Figtree. */

@@ -52,7 +52,11 @@ export const products: readonly Product[] = [
     tagline: 'Generate on-brand images and creatives with AI',
     description:
       'Turn a brief into publish-ready visuals. Generate, refine and export creatives for stories, social and campaigns in one workspace.',
-    capabilities: ['Prompt-to-image generation', 'Edit and refine variations', 'Export for every format'],
+    capabilities: [
+      'Prompt-to-image generation',
+      'Edit and refine variations',
+      'Export for every format',
+    ],
     kind: 'console',
     accent: 'orange',
     consoleUrl: productUrl('/studio/'),
@@ -72,7 +76,11 @@ export const products: readonly Product[] = [
     tagline: 'Voice agents that call, converse and log to CRM',
     description:
       'Run natural phone conversations at scale. Configure agents, place calls over telephony and sync every outcome to your CRM.',
-    capabilities: ['Outbound and inbound calls', 'Telephony and CRM built in', 'Call logs and outcomes'],
+    capabilities: [
+      'Outbound and inbound calls',
+      'Telephony and CRM built in',
+      'Call logs and outcomes',
+    ],
     kind: 'console',
     accent: 'indigo',
     consoleUrl: productUrl('/voice/'),
@@ -91,7 +99,11 @@ export const products: readonly Product[] = [
     tagline: 'Track every lead through to conversion',
     description:
       'A focused CRM for sales teams. Work the pipeline, schedule follow-ups and see every conversion in one console.',
-    capabilities: ['Pipeline and lead tracking', 'Follow-ups and conversion stages', 'Secure team sign-in'],
+    capabilities: [
+      'Pipeline and lead tracking',
+      'Follow-ups and conversion stages',
+      'Secure team sign-in',
+    ],
     kind: 'console',
     accent: 'yellow',
     consoleUrl: productUrl('/minicrm/'),
@@ -110,7 +122,11 @@ export const products: readonly Product[] = [
     tagline: 'Capture, qualify and route new leads',
     description:
       'Where new business comes in. Capture leads from every source, qualify them and hand each one to the right team.',
-    capabilities: ['Lead capture from every source', 'Qualification and scoring', 'Routing to the right team'],
+    capabilities: [
+      'Lead capture from every source',
+      'Qualification and scoring',
+      'Routing to the right team',
+    ],
     kind: 'console',
     accent: 'red',
     consoleUrl: productUrl('/leadhub/'),
@@ -130,7 +146,11 @@ export const products: readonly Product[] = [
     tagline: 'Check videos with speech recognition and an AI judge',
     description:
       'Upload a video and get a verdict. Speech is transcribed with language detection, then an AI judge checks it against your rules.',
-    capabilities: ['Multilingual speech-to-text', 'AI judge with clear verdicts', 'Tester console and API docs'],
+    capabilities: [
+      'Multilingual speech-to-text',
+      'AI judge with clear verdicts',
+      'Tester console and API docs',
+    ],
     kind: 'console',
     accent: 'green',
     consoleUrl: productUrl('/tcc/'),
@@ -150,7 +170,11 @@ export const products: readonly Product[] = [
     tagline: 'Answers grounded in a curated knowledge base',
     description:
       'A chat API that retrieves from a maintained knowledge base, so every answer is grounded in your content. Embed it anywhere.',
-    capabilities: ['Retrieval over a knowledge base', 'Grounded, source-backed answers', 'Simple REST chat API'],
+    capabilities: [
+      'Retrieval over a knowledge base',
+      'Grounded, source-backed answers',
+      'Simple REST chat API',
+    ],
     kind: 'api',
     accent: 'pink',
     apiBase: productUrl('/marathon/'),
@@ -268,4 +292,3 @@ export const accentStyles: Record<
     hex: '#d4508e',
   },
 }
-

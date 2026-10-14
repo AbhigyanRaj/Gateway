@@ -13,8 +13,7 @@
 @theme {
   /* Fonts */
   --font-display: 'Newsreader Variable', 'Newsreader', Georgia, serif;
-  --font-sans:
-    'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans: 'Figtree Variable', 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Weights: the system uses non-standard variable weights */

@@ -63,7 +63,7 @@ function CapabilityList({ hidden = false }: { hidden?: boolean }) {
  */
 export function CapabilityMarquee() {
   return (
-    <div className="relative z-10 flex w-full flex-col items-center gap-5 pb-8 md:gap-8 md:pb-10 [@media(min-height:741px)_and_(max-height:820px)]:md:gap-6 [@media(min-height:741px)_and_(max-height:820px)]:md:pb-8 [@media(max-height:740px)]:md:gap-5 [@media(max-height:740px)]:md:pb-8">
+    <div className="relative z-10 flex w-full flex-col items-center gap-5 pb-8 md:gap-8 md:pb-10 [@media(max-height:740px)]:md:gap-5 [@media(max-height:740px)]:md:pb-8 [@media(min-height:741px)_and_(max-height:820px)]:md:gap-6 [@media(min-height:741px)_and_(max-height:820px)]:md:pb-8">
       <p className="eyebrow text-tx-secondary">What you can do</p>
       <div className="w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_8%,#000_92%,transparent)]">
         <div className="flex w-max animate-marquee will-change-transform [animation-duration:60s] hover:[animation-play-state:paused]">

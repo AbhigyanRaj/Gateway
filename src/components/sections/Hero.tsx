@@ -38,11 +38,11 @@ function HeroStatusPill() {
     <Link
       to="/status"
       className={cn(
-        'group relative mt-6 inline-flex h-9 max-w-full min-w-[min(100%,19rem)] items-center justify-center gap-2.5 rounded-full border border-st bg-white/60 pr-3.5 pl-4 md:mt-8 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-5 [@media(max-height:740px)]:md:mt-4',
+        'group relative mt-6 inline-flex h-9 max-w-full min-w-[min(100%,19rem)] items-center justify-center gap-2.5 rounded-full border border-st bg-white/60 pr-3.5 pl-4 md:mt-8 [@media(max-height:740px)]:md:mt-4 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-5',
         'text-[13px] leading-none text-tx-secondary backdrop-blur-md md:text-sm',
         'transition-[background-color,color,border-color] duration-200 ease-standard hover:border-st hover:bg-white/90 hover:text-tx',
         // Extend the hit area to 44px without growing the visual pill.
-        "before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
+        "before:absolute before:inset-x-0 before:-inset-y-1 before:content-['']",
       )}
     >
       <span
@@ -101,7 +101,7 @@ export function Hero() {
 
         <h1
           id="hero-title"
-          className="mt-5 max-w-4xl h-hero max-[359px]:text-[38px] md:mt-7 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6 [@media(max-height:740px)]:md:mt-5"
+          className="mt-5 max-w-4xl h-hero max-[359px]:text-[38px] md:mt-7 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6"
         >
           <span className="block">Every ET AI tool,</span>
           <span className="block">one front door</span>
@@ -113,7 +113,7 @@ export function Hero() {
           status.
         </p>
 
-        <div className="mt-5 flex flex-wrap justify-center gap-3 sm:gap-4 md:mt-8 md:gap-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6 [@media(max-height:740px)]:md:mt-5">
+        <div className="mt-5 flex flex-wrap justify-center gap-3 sm:gap-4 md:mt-8 md:gap-5 [@media(max-height:740px)]:md:mt-5 [@media(min-height:741px)_and_(max-height:820px)]:md:mt-6">
           <Button variant="hero" size="hero" arrow asChild className={heroBtn}>
             <a href={studio.consoleUrl} target="_blank" rel="noopener noreferrer">
               <span className="sm:hidden">Open Studio</span>
@@ -131,7 +131,7 @@ export function Hero() {
         <HeroOrbit />
       </div>
 
-      <HeroHorizon className="min-h-24 flex-[1.6] md:min-h-40 [@media(min-height:741px)_and_(max-height:820px)]:md:min-h-[120px] [@media(max-height:740px)]:md:min-h-[100px]" />
+      <HeroHorizon className="min-h-24 flex-[1.6] md:min-h-40 [@media(max-height:740px)]:md:min-h-[100px] [@media(min-height:741px)_and_(max-height:820px)]:md:min-h-[120px]" />
 
       <CapabilityMarquee />
     </section>

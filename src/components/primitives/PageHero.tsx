@@ -19,7 +19,7 @@ export function PageHero({ title, subtitle, className, children }: PageHeroProps
     >
       <Ornament className="h-6 w-auto text-[#e2e2e2] md:h-8" />
       <h1 className="mt-8 h-page md:mt-10">{title}</h1>
-      {subtitle && <p className="mt-4 max-w-2xl text-intro md:mt-5">{subtitle}</p>}
+      {subtitle && <p className="mt-4 text-intro max-w-2xl md:mt-5">{subtitle}</p>}
       {children}
     </header>
   )

@@ -38,7 +38,7 @@ export function HeroGlow() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute bottom-0 left-1/2 -z-10 h-[700px] w-[2400px] origin-[50%_520px] -translate-x-1/2 scale-x-[.55] scale-y-[.85] md:scale-x-[.85] md:scale-y-100 lg:scale-x-100 [@media(min-height:741px)_and_(max-height:820px)]:md:scale-y-[.85] [@media(max-height:740px)]:md:scale-y-[.72]"
+      className="pointer-events-none absolute bottom-0 left-1/2 -z-10 h-[700px] w-[2400px] origin-[50%_520px] -translate-x-1/2 scale-x-[.55] scale-y-[.85] md:scale-x-[.85] md:scale-y-100 lg:scale-x-100 [@media(max-height:740px)]:md:scale-y-[.72] [@media(min-height:741px)_and_(max-height:820px)]:md:scale-y-[.85]"
     >
       <div
         className="absolute inset-0"

@@ -15,7 +15,19 @@ import { ShowcaseSelect, ShowcaseTabList } from './showcase/ShowcaseTabs'
  * dropdown. All panels share one grid cell, so the frame keeps the height of
  * the tallest panel and the page never jumps when switching.
  */
-const countWords = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten']
+const countWords = [
+  'Zero',
+  'One',
+  'Two',
+  'Three',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten',
+]
 const count = countWords[products.length]
 const showcaseTitle = count ? `${count} products,\none platform` : 'Every product,\none platform'
 

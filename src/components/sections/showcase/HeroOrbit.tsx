@@ -27,7 +27,16 @@ const slots: readonly Slot[] = [
   { x: 32, y: -214, md: { x: 50, y: -104 }, size: 60, rotate: 5, float: 2, delay: -2.6 },
   { x: -41, y: -36, size: 72, rotate: 4, float: 2, delay: -4.1 },
   { x: 41, y: -24, size: 68, rotate: -5, float: 1, delay: -1.9 },
-  { x: -46, y: 150, md: { x: -48, y: 126 }, size: 56, rotate: -3, far: true, float: 1, delay: -3.3 },
+  {
+    x: -46,
+    y: 150,
+    md: { x: -48, y: 126 },
+    size: 56,
+    rotate: -3,
+    far: true,
+    float: 1,
+    delay: -3.3,
+  },
   { x: 46, y: 162, md: { x: 48, y: 140 }, size: 58, rotate: 6, far: true, float: 2, delay: -5.2 },
 ]
 
@@ -107,7 +116,7 @@ export function HeroOrbit() {
     <ul
       aria-label="ET AI products"
       // Short screens: pull the arc in vertically and shrink the tiles a little.
-      className="pointer-events-none absolute inset-0 hidden md:block [@media(min-height:741px)_and_(max-height:820px)]:[--k:0.92] [@media(max-height:740px)]:[--k:0.84] [@media(max-height:740px)]:[&_li]:scale-90"
+      className="pointer-events-none absolute inset-0 hidden md:block [@media(max-height:740px)]:[--k:0.84] [@media(max-height:740px)]:[&_li]:scale-90 [@media(min-height:741px)_and_(max-height:820px)]:[--k:0.92]"
     >
       {products.slice(0, slots.length).map((p, i) => {
         const s = slots[i]
@@ -115,7 +124,7 @@ export function HeroOrbit() {
           <li
             key={p.id}
             className={cn(
-              'pointer-events-auto absolute w-max top-[calc(50%+var(--md-y)*var(--k,1))] left-[calc(50%+var(--md-x))] -translate-x-1/2 -translate-y-1/2',
+              'pointer-events-auto absolute top-[calc(50%+var(--md-y)*var(--k,1))] left-[calc(50%+var(--md-x))] w-max -translate-x-1/2 -translate-y-1/2',
               'lg:top-[calc(50%+var(--y)*var(--k,1))] lg:left-[calc(50%+var(--x))]',
               s.md ? 'scale-[.84] lg:scale-100' : 'hidden lg:block',
             )}
@@ -147,7 +156,10 @@ export function HeroTileRow({ className }: { className?: string }) {
   return (
     <ul
       aria-label="ET AI products"
-      className={cn('flex items-start justify-center gap-0.5 min-[360px]:gap-1.5 md:hidden', className)}
+      className={cn(
+        'flex items-start justify-center gap-0.5 min-[360px]:gap-1.5 md:hidden',
+        className,
+      )}
     >
       {products.map((p, i) => {
         const t = n > 1 ? (i / (n - 1)) * 2 - 1 : 0 // -1 … 1

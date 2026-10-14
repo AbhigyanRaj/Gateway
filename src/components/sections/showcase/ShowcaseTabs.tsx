@@ -14,7 +14,6 @@ import { cn } from '@/lib/utils'
 
 import { panelId, tabId } from './ids'
 
-
 interface TabsProps {
   active: ProductId
   onChange: (id: ProductId) => void
@@ -121,10 +120,7 @@ export function ShowcaseSelect({ active, onChange }: TabsProps) {
         sideOffset={6}
         className="z-[10001] w-(--radix-dropdown-menu-trigger-width) rounded-xl border-st-secondary bg-white p-1.5 shadow-kit-lg"
       >
-        <DropdownMenuRadioGroup
-          value={active}
-          onValueChange={(v) => onChange(v as ProductId)}
-        >
+        <DropdownMenuRadioGroup value={active} onValueChange={(v) => onChange(v as ProductId)}>
           {products.map((p) => {
             return (
               <DropdownMenuPrimitive.RadioItem

@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils'
 const buttonVariants = cva(
   [
     'group/btn relative isolate inline-flex shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full',
-    'font-sans font-medium whitespace-nowrap select-none touch-manipulation',
+    'touch-manipulation font-sans font-medium whitespace-nowrap select-none',
     'transition-[background-color,background-image,box-shadow,color,transform] duration-[350ms] ease-standard',
     'active:scale-[0.96] active:duration-150',
     'disabled:pointer-events-none disabled:opacity-40 aria-disabled:pointer-events-none aria-disabled:opacity-40',
@@ -44,7 +44,11 @@ const buttonVariants = cva(
       block: { true: 'w-full', false: '' },
     },
     compoundVariants: [
-      { variant: ['hero', 'heroOutline'], size: undefined, class: 'min-h-[52px] px-6 py-3.5 font-display leading-6' },
+      {
+        variant: ['hero', 'heroOutline'],
+        size: undefined,
+        class: 'min-h-[52px] px-6 py-3.5 font-display leading-6',
+      },
     ],
     defaultVariants: { variant: 'ink', size: 'md', block: false },
   },
@@ -53,8 +57,7 @@ const buttonVariants = cva(
 const glowVariants = new Set(['ink', 'hero'])
 
 export interface ButtonProps
-  extends React.ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {
+  extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
   /** Trailing arrow that plays the kit's arrow-loop on hover. */
   arrow?: boolean

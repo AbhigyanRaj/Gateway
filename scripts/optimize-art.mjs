@@ -19,14 +19,14 @@
  * Candidates come from scripts/generate-art.mjs (art-candidates/<slot>/<file>.png).
  * To swap a winner, edit WINNERS below and re-run.
  */
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import sharp from 'sharp';
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import sharp from 'sharp'
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const SRC = path.join(ROOT, 'art-candidates');
-const OUT = path.join(ROOT, 'src/assets/art');
-const KB = 1024;
+const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
+const SRC = path.join(ROOT, 'art-candidates')
+const OUT = path.join(ROOT, 'src/assets/art')
+const KB = 1024
 
 /**
  * Chosen candidate per slot (relative to art-candidates/<slot>/).
@@ -55,21 +55,21 @@ const WINNERS = {
   'showcase-studio': { file: 'openai-2.png' },
   'footer-texture': { file: 'openai-r3-2.png' },
   'og-bg': { file: 'gemini-2.png' },
-};
+}
 
 /** Export targets per slot: [outputName, width, height, maxBytes]. */
 function targetsFor(slot) {
-  if (slot.startsWith('product-')) return [[slot, 1600, 1000, 200 * KB]];
+  if (slot.startsWith('product-')) return [[slot, 1600, 1000, 200 * KB]]
   if (slot.startsWith('tile-'))
     return [
       [slot, 320, 320, 200 * KB],
       [`${slot}-sm`, 160, 160, 200 * KB],
       [`${slot}-xs`, 96, 96, 200 * KB],
-    ];
-  if (slot === 'showcase-studio') return [[slot, 1920, 1080, 250 * KB]];
-  if (slot === 'footer-texture') return [[slot, 3200, 520, 250 * KB]];
-  if (slot === 'og-bg') return [[slot, 1200, 630, 200 * KB]];
-  throw new Error(`No export target for ${slot}`);
+    ]
+  if (slot === 'showcase-studio') return [[slot, 1920, 1080, 250 * KB]]
+  if (slot === 'footer-texture') return [[slot, 3200, 520, 250 * KB]]
+  if (slot === 'og-bg') return [[slot, 1200, 630, 200 * KB]]
+  throw new Error(`No export target for ${slot}`)
 }
 
 /**
@@ -78,84 +78,125 @@ function targetsFor(slot) {
  * anti-aliasing, and use it as the new alpha (capped by the original alpha).
  */
 async function removeShadow(input) {
-  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { width, height } = info;
-  const binary = Buffer.alloc(width * height);
-  for (let i = 0; i < width * height; i++) binary[i] = data[i * 4 + 3] >= 240 ? 255 : 0;
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const { width, height } = info
+  const binary = Buffer.alloc(width * height)
+  for (let i = 0; i < width * height; i++) binary[i] = data[i * 4 + 3] >= 240 ? 255 : 0
   const mask = await sharp(binary, { raw: { width, height, channels: 1 } })
     .blur(0.8)
     .extractChannel(0)
     .raw()
-    .toBuffer();
-  if (mask.length !== width * height) throw new Error('removeShadow: unexpected mask size');
+    .toBuffer()
+  if (mask.length !== width * height) throw new Error('removeShadow: unexpected mask size')
   for (let i = 0; i < width * height; i++) {
-    const a = Math.min(255, Math.round((data[i * 4 + 3] * 255) / 250));
-    data[i * 4 + 3] = Math.min(a, mask[i]);
+    const a = Math.min(255, Math.round((data[i * 4 + 3] * 255) / 250))
+    data[i * 4 + 3] = Math.min(a, mask[i])
   }
-  return sharp(data, { raw: { width, height, channels: 4 } }).png().toBuffer();
+  return sharp(data, { raw: { width, height, channels: 4 } })
+    .png()
+    .toBuffer()
 }
 
 /** Square crop around the opaque (alpha >= 128) bounds so they fill `fit` of the frame. */
 async function frameByAlpha(input, fit) {
-  const { data, info } = await sharp(input).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  let x0 = info.width, y0 = info.height, x1 = 0, y1 = 0;
+  const { data, info } = await sharp(input)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  let x0 = info.width,
+    y0 = info.height,
+    x1 = 0,
+    y1 = 0
   for (let y = 0; y < info.height; y++) {
     for (let x = 0; x < info.width; x++) {
       if (data[(y * info.width + x) * 4 + 3] >= 128) {
-        x0 = Math.min(x0, x); x1 = Math.max(x1, x);
-        y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+        x0 = Math.min(x0, x)
+        x1 = Math.max(x1, x)
+        y0 = Math.min(y0, y)
+        y1 = Math.max(y1, y)
       }
     }
   }
-  const side = Math.round(Math.max(x1 - x0, y1 - y0) / fit);
-  const left = Math.round((x0 + x1 - side) / 2);
-  const top = Math.round((y0 + y1 - side) / 2);
+  const side = Math.round(Math.max(x1 - x0, y1 - y0) / fit)
+  const left = Math.round((x0 + x1 - side) / 2)
+  const top = Math.round((y0 + y1 - side) / 2)
   // Pad with transparency so the crop may extend past the source edges.
-  const pad = side;
+  const pad = side
   const padded = await sharp(input)
     .ensureAlpha()
-    .extend({ top: pad, bottom: pad, left: pad, right: pad, background: { r: 0, g: 0, b: 0, alpha: 0 } })
-    .toBuffer();
-  return sharp(padded).extract({ left: left + pad, top: top + pad, width: side, height: side }).toBuffer();
+    .extend({
+      top: pad,
+      bottom: pad,
+      left: pad,
+      right: pad,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    .toBuffer()
+  return sharp(padded)
+    .extract({ left: left + pad, top: top + pad, width: side, height: side })
+    .toBuffer()
 }
 
 /** Centre-crop (with optional zoom or alpha framing) and resize to exactly width x height. */
-async function render(input, width, height, { zoom = 1, position = 'centre', fit, cutShadow } = {}) {
-  const source = cutShadow ? await removeShadow(input) : input;
-  let img = sharp(fit ? await frameByAlpha(source, fit) : source);
+async function render(
+  input,
+  width,
+  height,
+  { zoom = 1, position = 'centre', fit, cutShadow } = {},
+) {
+  const source = cutShadow ? await removeShadow(input) : input
+  let img = sharp(fit ? await frameByAlpha(source, fit) : source)
   if (zoom !== 1) {
-    const { width: w, height: h } = await img.metadata();
-    const cw = Math.round(w / zoom);
-    const ch = Math.round(h / zoom);
-    img = sharp(await img.extract({ left: Math.round((w - cw) / 2), top: Math.round((h - ch) / 2), width: cw, height: ch }).toBuffer());
+    const { width: w, height: h } = await img.metadata()
+    const cw = Math.round(w / zoom)
+    const ch = Math.round(h / zoom)
+    img = sharp(
+      await img
+        .extract({
+          left: Math.round((w - cw) / 2),
+          top: Math.round((h - ch) / 2),
+          width: cw,
+          height: ch,
+        })
+        .toBuffer(),
+    )
   }
-  return img.resize(width, height, { fit: 'cover', position, kernel: 'lanczos3' }).toBuffer();
+  return img.resize(width, height, { fit: 'cover', position, kernel: 'lanczos3' }).toBuffer()
 }
 
 async function encodeWebp(buffer, maxBytes) {
   for (let quality = 90; quality >= 50; quality -= 4) {
-    const out = await sharp(buffer).webp({ quality, alphaQuality: 100, effort: 6, smartSubsample: true }).toBuffer();
-    if (out.length <= maxBytes || quality - 4 < 50) return { out, quality };
+    const out = await sharp(buffer)
+      .webp({ quality, alphaQuality: 100, effort: 6, smartSubsample: true })
+      .toBuffer()
+    if (out.length <= maxBytes || quality - 4 < 50) return { out, quality }
   }
 }
 
-const selectors = process.argv.slice(2);
-const slots = Object.keys(WINNERS).filter((s) => !selectors.length || selectors.some((sel) => s.startsWith(sel)));
-await fs.mkdir(OUT, { recursive: true });
+const selectors = process.argv.slice(2)
+const slots = Object.keys(WINNERS).filter(
+  (s) => !selectors.length || selectors.some((sel) => s.startsWith(sel)),
+)
+await fs.mkdir(OUT, { recursive: true })
 
 for (const slot of slots) {
-  const { file, ...opts } = WINNERS[slot];
-  const input = path.join(SRC, slot, file);
+  const { file, ...opts } = WINNERS[slot]
+  const input = path.join(SRC, slot, file)
   for (const [name, w, h, maxBytes] of targetsFor(slot)) {
-    const pixels = await render(input, w, h, opts);
-    const { out, quality } = await encodeWebp(pixels, maxBytes);
-    const dest = path.join(OUT, `${name}.webp`);
-    await fs.writeFile(dest, out);
-    const flag = out.length > maxBytes ? '  OVER BUDGET' : '';
-    console.log(`${name}.webp  ${w}x${h}  q${quality}  ${(out.length / KB).toFixed(1)} KB  <- ${slot}/${file}${flag}`);
+    const pixels = await render(input, w, h, opts)
+    const { out, quality } = await encodeWebp(pixels, maxBytes)
+    const dest = path.join(OUT, `${name}.webp`)
+    await fs.writeFile(dest, out)
+    const flag = out.length > maxBytes ? '  OVER BUDGET' : ''
+    console.log(
+      `${name}.webp  ${w}x${h}  q${quality}  ${(out.length / KB).toFixed(1)} KB  <- ${slot}/${file}${flag}`,
+    )
     if (slot === 'og-bg') {
-      await sharp(pixels).png({ compressionLevel: 9 }).toFile(path.join(SRC, 'og-bg-final.png'));
-      console.log(`art-candidates/og-bg-final.png  ${w}x${h}  (PNG for OG compositor)`);
+      await sharp(pixels).png({ compressionLevel: 9 }).toFile(path.join(SRC, 'og-bg-final.png'))
+      console.log(`art-candidates/og-bg-final.png  ${w}x${h}  (PNG for OG compositor)`)
     }
   }
 }

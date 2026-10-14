@@ -36,12 +36,12 @@
  * losslessly to PNG so every candidate has the same format.
  * Pick winners by eye, then run scripts/optimize-art.mjs to export WebP.
  */
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import sharp from 'sharp';
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import sharp from 'sharp'
 
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
-const OUT_DIR = path.join(ROOT, 'art-candidates');
+const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
+const OUT_DIR = path.join(ROOT, 'art-candidates')
 
 // ---------------------------------------------------------------------------
 // Style
@@ -51,11 +51,11 @@ const GLOBAL_STYLE =
   '(periwinkle #A5BBFC, indigo #556ADC, warm orange #F9730C, amber #FEB12B, sage green #83C040, rose #E380A8). ' +
   'Gradients are vertical or radial only and feel like natural light (dawn/dusk), never plastic. ' +
   'Subtle fine film grain. Smooth, rounded, symmetric geometric forms with thin white line-art details. ' +
-  'Clean, calm, premium, lots of negative space, never busy.';
+  'Clean, calm, premium, lots of negative space, never busy.'
 
 const NEGATIVE =
   'Absolutely no text, no letters, no numbers, no words, no logos, no watermarks, no signatures, ' +
-  'no UI chrome, no people, no faces, no hands.';
+  'no UI chrome, no people, no faces, no hands.'
 
 /** Product accents and their hero glyph (shared by product cards and tiles). */
 const PRODUCTS = {
@@ -114,7 +114,8 @@ const PRODUCTS = {
     tile: 'soft coral #EBA18F to coral #DB715C and warm brick red #C43D2B',
     styleRef: 'product-voice/openai-r2-1.png',
     // Chosen: the 45-degree magnet (an upright magnet with dots read as the letter U).
-    emblem: 'a horseshoe magnet tilted 45 degrees with banded pole tips facing the upper right and three small dots near the poles',
+    emblem:
+      'a horseshoe magnet tilted 45 degrees with banded pole tips facing the upper right and three small dots near the poles',
     tileRef: 'tile-leadhub/openai-new2-2.png',
     glyphs: [
       'a rounded funnel (wide rounded rim at the top, narrowing smoothly to a short rounded spout at the ' +
@@ -153,7 +154,7 @@ const PRODUCTS = {
       'that start wide at the bottom of the frame and meander inward, converging in perspective just below ' +
       'the bubble like a road receding toward it',
   },
-};
+}
 
 const productPrompt = (p) =>
   `${GLOBAL_STYLE} Landscape product card artwork. The whole frame is one smooth, saturated-but-soft vertical ` +
@@ -165,7 +166,7 @@ const productPrompt = (p) =>
   `translucent 3D object, like frosted milk-glass or porcelain: smooth rounded edges, gentle inner glow, ` +
   `delicate specular highlights, a very soft diffuse shadow, front-facing, symmetric. The glyph's height is about ` +
   `one third of the frame height, perfectly centred horizontally and vertically, with calm generous negative ` +
-  `space around it. Soft diffuse studio lighting from above. ${NEGATIVE}`;
+  `space around it. Soft diffuse studio lighting from above. ${NEGATIVE}`
 
 /** A new card in the approved family: an edit of an approved card (the reference image). */
 const newCardPrompt = (p, glyph) =>
@@ -176,7 +177,7 @@ const newCardPrompt = (p, glyph) =>
   `grain, and the same glyph size (about one third of the frame height) and centred position. Replace the ` +
   `glyph with: ${glyph}. Render it in exactly the same soft, white, glossy, translucent milk-glass / porcelain ` +
   `material, with smooth rounded edges, gentle inner glow and delicate specular highlights. Change the ` +
-  `background gradient to ${p.field}. ${NEGATIVE}`;
+  `background gradient to ${p.field}. ${NEGATIVE}`
 
 /** Re-render an approved tile (sent as the reference image) on a transparent background. */
 const tileTransparentPrompt = (p) =>
@@ -184,7 +185,7 @@ const tileTransparentPrompt = (p) =>
   `rounded-square (squircle) shape and proportions, the same ${p.tile} frosted glossy glass gradient, the glossy ` +
   `top highlight, the soft inner glow and depth, and the same embossed soft-white emblem (${p.emblem}). Remove ` +
   `the white backdrop entirely so only the tile remains, surrounded by transparent pixels, with at most a very ` +
-  `soft, subtle contact shadow directly beneath the tile. ${NEGATIVE}`;
+  `soft, subtle contact shadow directly beneath the tile. ${NEGATIVE}`
 
 /** Original text-to-image tile prompt (used to create the approved tiles on white). */
 const tilePrompt = (p) =>
@@ -193,12 +194,12 @@ const tilePrompt = (p) =>
   `gradient, a soft luminous inner glow, a subtle glossy highlight along the top edge. In the centre of the tile, ` +
   `a subtle embossed symmetric emblem in soft white: ${p.emblem}, simplified and gently debossed into the glass. ` +
   `A soft, diffuse drop shadow beneath the tile. Isolated on a pure, flat white #FFFFFF background with nothing ` +
-  `else in the frame. ${NEGATIVE}`;
+  `else in the frame. ${NEGATIVE}`
 
 // ---------------------------------------------------------------------------
 // Slots. `openai` = list of sizes to try in order; `gemini` = aspect ratio.
 // ---------------------------------------------------------------------------
-const SLOTS = {};
+const SLOTS = {}
 for (const [key, p] of Object.entries(PRODUCTS)) {
   SLOTS[`product-${key}`] = p.styleRef
     ? {
@@ -211,7 +212,7 @@ for (const [key, p] of Object.entries(PRODUCTS)) {
         prompt: productPrompt(p),
         openai: ['2048x1280', '1536x1024'],
         gemini: { aspectRatio: '16:9', imageSize: '2K' },
-      };
+      }
 }
 for (const [key, p] of Object.entries(PRODUCTS)) {
   SLOTS[`tile-${key}`] = p.tileRef
@@ -226,7 +227,7 @@ for (const [key, p] of Object.entries(PRODUCTS)) {
         prompts: (p.emblems ?? [p.emblem]).map((emblem) => tilePrompt({ ...p, emblem })),
         openai: ['1024x1024'],
         providers: ['openai'],
-      };
+      }
 }
 SLOTS['showcase-studio'] = {
   prompt:
@@ -240,7 +241,7 @@ SLOTS['showcase-studio'] = {
     `perfectly symmetric, generous empty negative space across the top third. ${NEGATIVE}`,
   openai: ['2048x1152', '1536x1024'],
   gemini: { aspectRatio: '16:9', imageSize: '2K' },
-};
+}
 SLOTS['footer-texture'] = {
   prompt:
     'Extreme close-up macro photograph of a flat sheet of salmon-pink newsprint: the soft, warm pink of a ' +
@@ -256,7 +257,7 @@ SLOTS['footer-texture'] = {
     'no legible letters, no characters, no numerals, no words, no headlines, no logos, no watermarks.',
   openai: ['3072x1024', '2048x1152', '1536x1024'],
   gemini: { aspectRatio: '4:1', imageSize: '2K' },
-};
+}
 SLOTS['og-bg'] = {
   prompt:
     `${GLOBAL_STYLE} Social card background, sunrise light. A warm orange #F9730C core glow at the top centre, ` +
@@ -266,88 +267,94 @@ SLOTS['og-bg'] = {
     `Perfectly symmetric left-to-right. ${NEGATIVE}`,
   openai: ['2048x1072', '1536x1024'],
   gemini: { aspectRatio: '16:9', imageSize: '2K' },
-};
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 class ApiError extends Error {
   constructor(status, message) {
-    super(message);
-    this.status = status;
+    super(message)
+    this.status = status
   }
 }
 
 async function withRetry(fn, label, tries = 4) {
   for (let i = 1; ; i++) {
     try {
-      return await fn();
+      return await fn()
     } catch (err) {
-      const retryable = !err.status || err.status === 429 || err.status >= 500;
-      if (!retryable || i >= tries) throw err;
-      const wait = 4000 * i;
-      console.warn(`  ! ${label}: ${err.message.slice(0, 160)} (retry ${i} in ${wait / 1000}s)`);
-      await sleep(wait);
+      const retryable = !err.status || err.status === 429 || err.status >= 500
+      if (!retryable || i >= tries) throw err
+      const wait = 4000 * i
+      console.warn(`  ! ${label}: ${err.message.slice(0, 160)} (retry ${i} in ${wait / 1000}s)`)
+      await sleep(wait)
     }
   }
 }
 
 /** Run async task factories with a fixed concurrency limit. */
 async function pool(tasks, limit) {
-  const results = [];
-  let next = 0;
+  const results = []
+  let next = 0
   const worker = async () => {
     while (next < tasks.length) {
-      const i = next++;
-      results[i] = await tasks[i]();
+      const i = next++
+      results[i] = await tasks[i]()
     }
-  };
-  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker));
-  return results;
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker))
+  return results
 }
 
 // ---------------------------------------------------------------------------
 // Providers
 // ---------------------------------------------------------------------------
-const OPENAI = 'https://api.openai.com/v1';
-const GEMINI = 'https://generativelanguage.googleapis.com/v1beta';
-const openaiAuth = () => ({ Authorization: `Bearer ${process.env.OPENAI_API_KEY}` });
-const openaiHeaders = () => ({ ...openaiAuth(), 'Content-Type': 'application/json' });
-const geminiHeaders = () => ({ 'x-goog-api-key': process.env.GEMINI_API_KEY, 'Content-Type': 'application/json' });
+const OPENAI = 'https://api.openai.com/v1'
+const GEMINI = 'https://generativelanguage.googleapis.com/v1beta'
+const openaiAuth = () => ({ Authorization: `Bearer ${process.env.OPENAI_API_KEY}` })
+const openaiHeaders = () => ({ ...openaiAuth(), 'Content-Type': 'application/json' })
+const geminiHeaders = () => ({
+  'x-goog-api-key': process.env.GEMINI_API_KEY,
+  'Content-Type': 'application/json',
+})
 
 async function listOpenAIImageModels() {
-  const r = await fetch(`${OPENAI}/models`, { headers: openaiAuth() });
-  if (!r.ok) throw new ApiError(r.status, `OpenAI /models ${r.status}`);
-  const { data } = await r.json();
-  return data.filter((m) => /^gpt-image-/.test(m.id));
+  const r = await fetch(`${OPENAI}/models`, { headers: openaiAuth() })
+  if (!r.ok) throw new ApiError(r.status, `OpenAI /models ${r.status}`)
+  const { data } = await r.json()
+  return data.filter((m) => /^gpt-image-/.test(m.id))
 }
 
 async function listGeminiImageModels() {
-  const models = [];
-  let token = '';
+  const models = []
+  let token = ''
   do {
     const r = await fetch(`${GEMINI}/models?pageSize=1000${token ? `&pageToken=${token}` : ''}`, {
       headers: geminiHeaders(),
-    });
-    if (!r.ok) throw new ApiError(r.status, `Gemini /models ${r.status}`);
-    const j = await r.json();
-    models.push(...(j.models ?? []));
-    token = j.nextPageToken ?? '';
-  } while (token);
-  return models.filter((m) => /image|imagen/i.test(m.name)).map((m) => m.name.replace(/^models\//, ''));
+    })
+    if (!r.ok) throw new ApiError(r.status, `Gemini /models ${r.status}`)
+    const j = await r.json()
+    models.push(...(j.models ?? []))
+    token = j.nextPageToken ?? ''
+  } while (token)
+  return models
+    .filter((m) => /image|imagen/i.test(m.name))
+    .map((m) => m.name.replace(/^models\//, ''))
 }
 
 /** Newest gpt-image family (highest version number, no dated snapshots, no -mini). */
 async function resolveOpenAIModels() {
-  if (process.env.OPENAI_IMAGE_MODELS) return process.env.OPENAI_IMAGE_MODELS.split(',').map((s) => s.trim());
+  if (process.env.OPENAI_IMAGE_MODELS)
+    return process.env.OPENAI_IMAGE_MODELS.split(',').map((s) => s.trim())
   const ids = (await listOpenAIImageModels())
     .map((m) => m.id)
-    .filter((id) => !/\d{4}-\d{2}-\d{2}$/.test(id) && !/mini|latest/.test(id));
-  const version = (id) => parseFloat(id.match(/^gpt-image-([\d.]+)/)?.[1] ?? '0');
-  const top = Math.max(...ids.map(version));
-  return ids.filter((id) => version(id) === top).sort();
+    .filter((id) => !/\d{4}-\d{2}-\d{2}$/.test(id) && !/mini|latest/.test(id))
+  const version = (id) => parseFloat(id.match(/^gpt-image-([\d.]+)/)?.[1] ?? '0')
+  const top = Math.max(...ids.map(version))
+  return ids.filter((id) => version(id) === top).sort()
 }
 
 async function resolveGeminiModels() {
@@ -357,46 +364,50 @@ async function resolveGeminiModels() {
     'gemini-3-pro-image-preview',
     'gemini-3.1-flash-image',
     'gemini-2.5-flash-image',
-  ].filter(Boolean);
-  const available = new Set(await listGeminiImageModels());
-  return preferred.filter((m) => available.has(m));
+  ].filter(Boolean)
+  const available = new Set(await listGeminiImageModels())
+  return preferred.filter((m) => available.has(m))
 }
 
 /** Text-to-image, or an edit of `ref` (path under art-candidates/) when given. */
 async function openaiGenerate(model, prompt, sizes, { ref, params = {} } = {}) {
-  const refBuffer = ref ? await fs.readFile(path.join(OUT_DIR, ref)) : null;
-  let lastErr;
+  const refBuffer = ref ? await fs.readFile(path.join(OUT_DIR, ref)) : null
+  let lastErr
   for (const size of sizes) {
-    const fields = { model, prompt, size, quality: 'high', output_format: 'png', n: 1, ...params };
-    let r;
+    const fields = { model, prompt, size, quality: 'high', output_format: 'png', n: 1, ...params }
+    let r
     if (refBuffer) {
-      const form = new FormData();
-      for (const [k, v] of Object.entries(fields)) form.append(k, String(v));
-      form.append('image', new Blob([refBuffer], { type: 'image/png' }), path.basename(ref));
-      r = await fetch(`${OPENAI}/images/edits`, { method: 'POST', headers: openaiAuth(), body: form });
+      const form = new FormData()
+      for (const [k, v] of Object.entries(fields)) form.append(k, String(v))
+      form.append('image', new Blob([refBuffer], { type: 'image/png' }), path.basename(ref))
+      r = await fetch(`${OPENAI}/images/edits`, {
+        method: 'POST',
+        headers: openaiAuth(),
+        body: form,
+      })
     } else {
       r = await fetch(`${OPENAI}/images/generations`, {
         method: 'POST',
         headers: openaiHeaders(),
         body: JSON.stringify(fields),
-      });
+      })
     }
-    const j = await r.json().catch(() => ({}));
-    if (r.ok) return { buffer: Buffer.from(j.data[0].b64_json, 'base64'), model, size };
-    lastErr = new ApiError(r.status, `OpenAI ${model} ${size}: ${j.error?.message ?? r.statusText}`);
+    const j = await r.json().catch(() => ({}))
+    if (r.ok) return { buffer: Buffer.from(j.data[0].b64_json, 'base64'), model, size }
+    lastErr = new ApiError(r.status, `OpenAI ${model} ${size}: ${j.error?.message ?? r.statusText}`)
     // Unsupported size: fall through to the next size; anything else bubbles up.
-    if (!(r.status === 400 && /size|resolution|aspect/i.test(lastErr.message))) throw lastErr;
+    if (!(r.status === 400 && /size|resolution|aspect/i.test(lastErr.message))) throw lastErr
   }
-  throw lastErr;
+  throw lastErr
 }
 
 async function geminiGenerate(models, prompt, imageConfig, { ref } = {}) {
-  const parts = [{ text: prompt }];
+  const parts = [{ text: prompt }]
   if (ref) {
-    const png = await sharp(path.join(OUT_DIR, ref)).png().toBuffer();
-    parts.unshift({ inlineData: { mimeType: 'image/png', data: png.toString('base64') } });
+    const png = await sharp(path.join(OUT_DIR, ref)).png().toBuffer()
+    parts.unshift({ inlineData: { mimeType: 'image/png', data: png.toString('base64') } })
   }
-  let lastErr;
+  let lastErr
   for (const model of models) {
     const r = await fetch(`${GEMINI}/models/${model}:generateContent`, {
       method: 'POST',
@@ -405,77 +416,83 @@ async function geminiGenerate(models, prompt, imageConfig, { ref } = {}) {
         contents: [{ role: 'user', parts }],
         generationConfig: { responseModalities: ['IMAGE'], imageConfig },
       }),
-    });
-    const j = await r.json().catch(() => ({}));
+    })
+    const j = await r.json().catch(() => ({}))
     if (r.ok) {
-      const part = j.candidates?.[0]?.content?.parts?.find((p) => p.inlineData);
+      const part = j.candidates?.[0]?.content?.parts?.find((p) => p.inlineData)
       if (part) {
-        const png = await sharp(Buffer.from(part.inlineData.data, 'base64')).png().toBuffer();
-        return { buffer: png, model, size: imageConfig.aspectRatio };
+        const png = await sharp(Buffer.from(part.inlineData.data, 'base64')).png().toBuffer()
+        return { buffer: png, model, size: imageConfig.aspectRatio }
       }
-      lastErr = new ApiError(502, `Gemini ${model}: no image (${j.candidates?.[0]?.finishReason ?? 'unknown'})`);
-      console.warn(`  ! ${lastErr.message} (falling back to the next model)`);
-      continue;
+      lastErr = new ApiError(
+        502,
+        `Gemini ${model}: no image (${j.candidates?.[0]?.finishReason ?? 'unknown'})`,
+      )
+      console.warn(`  ! ${lastErr.message} (falling back to the next model)`)
+      continue
     }
-    lastErr = new ApiError(r.status, `Gemini ${model}: ${j.error?.message ?? r.statusText}`);
-    if (r.status === 429 || r.status >= 500) throw lastErr; // let withRetry handle transient errors
-    console.warn(`  ! ${lastErr.message.slice(0, 160)} (falling back to the next model)`);
+    lastErr = new ApiError(r.status, `Gemini ${model}: ${j.error?.message ?? r.statusText}`)
+    if (r.status === 429 || r.status >= 500) throw lastErr // let withRetry handle transient errors
+    console.warn(`  ! ${lastErr.message.slice(0, 160)} (falling back to the next model)`)
   }
-  throw lastErr;
+  throw lastErr
 }
 
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
-const args = process.argv.slice(2);
+const args = process.argv.slice(2)
 const flag = (name, def) => {
-  const a = args.find((x) => x === `--${name}` || x.startsWith(`--${name}=`));
-  if (!a) return def;
-  return a.includes('=') ? a.split('=').slice(1).join('=') : true;
-};
-const selectors = args.filter((a) => !a.startsWith('--'));
+  const a = args.find((x) => x === `--${name}` || x.startsWith(`--${name}=`))
+  if (!a) return def
+  return a.includes('=') ? a.split('=').slice(1).join('=') : true
+}
+const selectors = args.filter((a) => !a.startsWith('--'))
 const slotIds = Object.keys(SLOTS).filter(
   (id) => !selectors.length || selectors.some((s) => id.startsWith(s)),
-);
-const n = Number(flag('n', 2));
-const providers = String(flag('providers', 'openai,gemini')).split(',');
-const tag = flag('tag', '');
-const concurrency = Number(flag('concurrency', 5));
+)
+const n = Number(flag('n', 2))
+const providers = String(flag('providers', 'openai,gemini')).split(',')
+const tag = flag('tag', '')
+const concurrency = Number(flag('concurrency', 5))
 
 if (flag('list')) {
-  for (const id of slotIds) console.log(`\n[${id}]\n${(SLOTS[id].prompts ?? [SLOTS[id].prompt]).join('\n---\n')}`);
-  process.exit(0);
+  for (const id of slotIds)
+    console.log(`\n[${id}]\n${(SLOTS[id].prompts ?? [SLOTS[id].prompt]).join('\n---\n')}`)
+  process.exit(0)
 }
 if (!process.env.OPENAI_API_KEY || !process.env.GEMINI_API_KEY) {
-  console.error('Missing OPENAI_API_KEY / GEMINI_API_KEY. Run with: node --env-file=.env.local scripts/generate-art.mjs');
-  process.exit(1);
+  console.error(
+    'Missing OPENAI_API_KEY / GEMINI_API_KEY. Run with: node --env-file=.env.local scripts/generate-art.mjs',
+  )
+  process.exit(1)
 }
 if (flag('models')) {
-  console.log('OpenAI:', (await listOpenAIImageModels()).map((m) => m.id).join(', '));
-  console.log('Gemini:', (await listGeminiImageModels()).join(', '));
-  process.exit(0);
+  console.log('OpenAI:', (await listOpenAIImageModels()).map((m) => m.id).join(', '))
+  console.log('Gemini:', (await listGeminiImageModels()).join(', '))
+  process.exit(0)
 }
 if (!slotIds.length) {
-  console.error(`No slot matches ${selectors.join(' ')}. Slots: ${Object.keys(SLOTS).join(', ')}`);
-  process.exit(1);
+  console.error(`No slot matches ${selectors.join(' ')}. Slots: ${Object.keys(SLOTS).join(', ')}`)
+  process.exit(1)
 }
 
-const openaiModels = providers.includes('openai') ? await resolveOpenAIModels() : [];
-const geminiModels = providers.includes('gemini') ? await resolveGeminiModels() : [];
-console.log(`OpenAI models: ${openaiModels.join(', ') || '(skipped)'}`);
-console.log(`Gemini models: ${geminiModels.join(' -> ') || '(skipped)'}`);
-console.log(`Slots: ${slotIds.join(', ')} | ${n} per provider${tag ? ` | tag ${tag}` : ''}\n`);
+const openaiModels = providers.includes('openai') ? await resolveOpenAIModels() : []
+const geminiModels = providers.includes('gemini') ? await resolveGeminiModels() : []
+console.log(`OpenAI models: ${openaiModels.join(', ') || '(skipped)'}`)
+console.log(`Gemini models: ${geminiModels.join(' -> ') || '(skipped)'}`)
+console.log(`Slots: ${slotIds.join(', ')} | ${n} per provider${tag ? ` | tag ${tag}` : ''}\n`)
 
-const jobs = { openai: [], gemini: [] };
+const jobs = { openai: [], gemini: [] }
 for (const id of slotIds) {
-  const slot = SLOTS[id];
+  const slot = SLOTS[id]
   for (let i = 1; i <= n; i++) {
-    const prompt = slot.prompts ? slot.prompts[(i - 1) % slot.prompts.length] : slot.prompt;
-    const file = path.join(OUT_DIR, id, `%p${tag ? `-${tag}` : ''}-${i}.png`);
+    const prompt = slot.prompts ? slot.prompts[(i - 1) % slot.prompts.length] : slot.prompt
+    const file = path.join(OUT_DIR, id, `%p${tag ? `-${tag}` : ''}-${i}.png`)
     const save = async (provider, res) => {
-      const out = file.replace('%p', provider);
-      await fs.mkdir(path.dirname(out), { recursive: true });
-      await fs.writeFile(out, res.buffer);
+      const out = file.replace('%p', provider)
+      await fs.mkdir(path.dirname(out), { recursive: true })
+      await fs.writeFile(out, res.buffer)
       await fs.writeFile(
         out.replace(/\.png$/, '.json'),
         JSON.stringify(
@@ -483,39 +500,43 @@ for (const id of slotIds) {
           null,
           2,
         ),
-      );
-      const meta = await sharp(res.buffer).metadata();
-      console.log(`  ok ${path.relative(ROOT, out)}  ${res.model}  ${meta.width}x${meta.height}`);
-      return out;
-    };
+      )
+      const meta = await sharp(res.buffer).metadata()
+      console.log(`  ok ${path.relative(ROOT, out)}  ${res.model}  ${meta.width}x${meta.height}`)
+      return out
+    }
     const fail = (label) => (err) => {
-      console.error(`  FAIL ${label}: ${err.message.slice(0, 240)}`);
-      return null;
-    };
-    const allowed = (p) => !slot.providers || slot.providers.includes(p);
+      console.error(`  FAIL ${label}: ${err.message.slice(0, 240)}`)
+      return null
+    }
+    const allowed = (p) => !slot.providers || slot.providers.includes(p)
     if (openaiModels.length && allowed('openai')) {
-      const model = openaiModels[(i - 1) % openaiModels.length];
-      const label = `${id} openai-${i}`;
-      const opts = { ref: slot.ref, params: slot.openaiParams };
+      const model = openaiModels[(i - 1) % openaiModels.length]
+      const label = `${id} openai-${i}`
+      const opts = { ref: slot.ref, params: slot.openaiParams }
       jobs.openai.push(() =>
         withRetry(() => openaiGenerate(model, prompt, slot.openai, opts), label)
           .then((res) => save('openai', res))
           .catch(fail(label)),
-      );
+      )
     }
     if (geminiModels.length && allowed('gemini')) {
-      const label = `${id} gemini-${i}`;
+      const label = `${id} gemini-${i}`
       jobs.gemini.push(() =>
         withRetry(() => geminiGenerate(geminiModels, prompt, slot.gemini, { ref: slot.ref }), label)
           .then((res) => save('gemini', res))
           .catch(fail(label)),
-      );
+      )
     }
   }
 }
 
-const started = Date.now();
-const results = (await Promise.all([pool(jobs.openai, concurrency), pool(jobs.gemini, concurrency)])).flat();
-const ok = results.filter(Boolean).length;
-console.log(`\nDone: ${ok}/${results.length} candidates in ${((Date.now() - started) / 1000).toFixed(0)}s`);
-if (ok < results.length) process.exitCode = 1;
+const started = Date.now()
+const results = (
+  await Promise.all([pool(jobs.openai, concurrency), pool(jobs.gemini, concurrency)])
+).flat()
+const ok = results.filter(Boolean).length
+console.log(
+  `\nDone: ${ok}/${results.length} candidates in ${((Date.now() - started) / 1000).toFixed(0)}s`,
+)
+if (ok < results.length) process.exitCode = 1

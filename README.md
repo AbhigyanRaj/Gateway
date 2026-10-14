@@ -2,24 +2,24 @@
 
 The front door to every ET AI product. One page maps the six products (AI Creative Studio first), lists their APIs, and shows live service health.
 
-| Route | What it is |
-|---|---|
-| `/` | Landing page: hero, product showcase, product cards, API picker, live status, CTA |
-| `/apis` | API directory: base URLs, health URLs, auth notes, docs, copy buttons |
-| `/status` | Live status for every service, refreshed every 30s |
-| anything else | 404 |
+| Route         | What it is                                                                        |
+| ------------- | --------------------------------------------------------------------------------- |
+| `/`           | Landing page: hero, product showcase, product cards, API picker, live status, CTA |
+| `/apis`       | API directory: base URLs, health URLs, auth notes, docs, copy buttons             |
+| `/status`     | Live status for every service, refreshed every 30s                                |
+| anything else | 404                                                                               |
 
 ## Products
 
-| Product | Console | API base | Health |
-|---|---|---|---|
-| AI Creative Studio | `/studio/` | `/studio/api/v1/` (sign-in required) | `/studio/` (console page) |
-| AI Calling Bot | `/voice/` | `/voice/api/` | `/voice/api/health` |
-| MiniCRM | `/minicrm/` | `/minicrm/api/` | `/minicrm/api/health` |
-| LeadHub | `/leadhub/` | none (web app) | `/leadhub/healthz` |
-| TCC Video Verification | `/tcc/` (tester), `/tcc/docs` | `/tcc/` | `/tcc/health` |
-| Marathon Chatbot | API only | `/marathon/` | `/marathon/health` |
-| Gateway server | | | `/health` |
+| Product                | Console                       | API base                             | Health                    |
+| ---------------------- | ----------------------------- | ------------------------------------ | ------------------------- |
+| AI Creative Studio     | `/studio/`                    | `/studio/api/v1/` (sign-in required) | `/studio/` (console page) |
+| AI Calling Bot         | `/voice/`                     | `/voice/api/`                        | `/voice/api/health`       |
+| MiniCRM                | `/minicrm/`                   | `/minicrm/api/`                      | `/minicrm/api/health`     |
+| LeadHub                | `/leadhub/`                   | none (web app)                       | `/leadhub/healthz`        |
+| TCC Video Verification | `/tcc/` (tester), `/tcc/docs` | `/tcc/`                              | `/tcc/health`             |
+| Marathon Chatbot       | API only                      | `/marathon/`                         | `/marathon/health`        |
+| Gateway server         |                               |                                      | `/health`                 |
 
 Every product, along with its copy, links, accent colour and health path, is defined in **`src/data/products.ts`**. Edit that one file to change names, descriptions or URLs.
 

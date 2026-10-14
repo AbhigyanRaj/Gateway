@@ -1,11 +1,7 @@
 import { cn } from '@/lib/utils'
 
 /** External link with safe rel + a screen-reader hint. */
-export function ExternalLink({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<'a'>) {
+export function ExternalLink({ className, children, ...props }: React.ComponentProps<'a'>) {
   return (
     <a target="_blank" rel="noopener noreferrer" className={cn(className)} {...props}>
       {children}
