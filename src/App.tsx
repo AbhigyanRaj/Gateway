@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect, useRef, type ComponentType } from 'react'
 import {
   createBrowserRouter,
   Outlet,
@@ -11,13 +11,21 @@ import {
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SkipLink } from '@/components/layout/SkipLink'
-import { Toaster } from '@/components/ui/sonner'
-import { TooltipProvider } from '@/components/ui/tooltip'
 import HomePage from '@/pages/HomePage'
+import { lazyPage } from '@/pages/lazyPage'
+import RouteErrorPage from '@/pages/RouteErrorPage'
 
-const ApisPage = lazy(() => import('@/pages/ApisPage'))
-const StatusPage = lazy(() => import('@/pages/StatusPage'))
-const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'))
+const ApisPage = lazyPage(() => import('@/pages/ApisPage'))
+const StatusPage = lazyPage(() => import('@/pages/StatusPage'))
+const NotFoundPage = lazyPage(() => import('@/pages/NotFoundPage'))
+// Toasts only appear after a copy action, so the toaster loads off the critical
+// path. If its chunk can't load, the app carries on without toasts.
+const Toaster = lazy<ComponentType>(() =>
+  import('@/components/ui/sonner').then(
+    (m) => ({ default: m.Toaster }),
+    () => ({ default: () => null }),
+  ),
+)
 
 const queryClient = new QueryClient()
 
@@ -67,10 +75,16 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: 'apis', element: <ApisPage /> },
-      { path: 'status', element: <StatusPage /> },
-      { path: '*', element: <NotFoundPage /> },
+      {
+        // Page errors render inside the header and footer.
+        errorElement: <RouteErrorPage />,
+        children: [
+          { index: true, element: <HomePage /> },
+          { path: 'apis', element: <ApisPage /> },
+          { path: 'status', element: <StatusPage /> },
+          { path: '*', element: <NotFoundPage /> },
+        ],
+      },
     ],
   },
 ])
@@ -78,10 +92,10 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider delayDuration={200}>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
+      <Suspense>
         <Toaster />
-      </TooltipProvider>
+      </Suspense>
     </QueryClientProvider>
   )
 }

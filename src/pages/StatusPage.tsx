@@ -11,9 +11,13 @@ import { MetricBand } from '@/components/status/MetricBand'
 import { StatusTable } from '@/components/status/StatusTable'
 import { Button } from '@/components/ui/button'
 import { site } from '@/config/site'
+import { products } from '@/data/products'
 import { useHealth } from '@/hooks/useHealth'
 import { POLL_MS, statusCopy, type HealthResult } from '@/lib/health'
 import { cn } from '@/lib/utils'
+
+import { listNames } from './meta'
+import { PageMeta } from './PageMeta'
 
 type StatusFilter = 'all' | 'operational' | 'issues'
 
@@ -26,8 +30,7 @@ const legend = [
 
 const isIssue = (r: HealthResult | undefined) => r?.status === 'degraded' || r?.status === 'down'
 
-const description =
-  'Live health for every ET AI service, checked from your browser every 30 seconds: AI Creative Studio, the AI Calling Bot, TCC Video Verification, the Marathon chatbot and the gateway server.'
+const description = `Live health for ${listNames([...products.map((p) => p.name), 'the gateway server'])}, checked every ${POLL_MS / 1000} seconds.`
 
 export default function StatusPage() {
   const { results, aggregate, isFetching, refetch } = useHealth()
@@ -74,8 +77,7 @@ export default function StatusPage() {
 
   return (
     <>
-      <title>{`Status · ${site.name}`}</title>
-      <meta name="description" content={description} />
+      <PageMeta title={`Status · ${site.name}`} description={description} path="/status" />
 
       <div className="flex flex-col gap-20 md:gap-32">
         <PageHero title="Status">

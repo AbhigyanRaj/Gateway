@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { site } from '@/config/site'
 import { products } from '@/data/products'
 
+import { PageMeta } from './PageMeta'
+
 const rowClass =
   'group flex min-h-[52px] items-center justify-between gap-4 border-b border-st py-2.5 text-body leading-[1.55] tracking-[-0.14px] text-tx-secondary transition-colors duration-200 ease-standard last:border-b-0 hover:text-tx'
 
@@ -16,8 +18,11 @@ const arrowClass =
 export default function NotFoundPage() {
   return (
     <>
-      <title>{`Page not found · ${site.name}`}</title>
-      <meta name="robots" content="noindex" />
+      <PageMeta
+        title={`Page not found · ${site.name}`}
+        description="That address doesn't lead anywhere on ET AI Labs."
+        noindex
+      />
 
       <PageHero
         title="Page not found"

@@ -22,14 +22,16 @@ import { site } from '@/config/site'
 import { useHealth } from '@/hooks/useHealth'
 import { useReveal } from '@/hooks/useReveal'
 
+import { productNames } from './meta'
+import { PageMeta } from './PageMeta'
+
 const filters: readonly PillOption<ApiFilter>[] = [
   { value: 'all', label: 'All' },
   { value: 'console', label: 'Consoles' },
   { value: 'api', label: 'API only' },
 ]
 
-const description =
-  'Base URLs, health checks and docs for every ET AI service: AI Creative Studio, the AI Calling Bot, TCC Video Verification and the Marathon chatbot.'
+const description = `Base URLs, health checks and docs for ${productNames}.`
 
 export default function ApisPage() {
   const { results } = useHealth()
@@ -69,8 +71,7 @@ export default function ApisPage() {
 
   return (
     <>
-      <title>{`APIs · ${site.name}`}</title>
-      <meta name="description" content={description} />
+      <PageMeta title={`APIs · ${site.name}`} description={description} path="/apis" />
 
       <div className="flex flex-col gap-20 md:gap-32">
         <div className="flex flex-col items-center">
@@ -95,7 +96,10 @@ export default function ApisPage() {
             </div>
           </PageHero>
 
-          <section aria-label="API catalogue" className="container-page mt-10 md:mt-20">
+          <section aria-labelledby="api-catalogue-title" className="container-page mt-10 md:mt-20">
+            <h2 id="api-catalogue-title" className="sr-only">
+              API catalogue
+            </h2>
             <output aria-live="polite" className="sr-only">
               {visible.length === apiEntries.length
                 ? ''

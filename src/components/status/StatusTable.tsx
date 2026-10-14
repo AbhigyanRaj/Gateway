@@ -14,6 +14,7 @@ import { ServiceTile } from '@/components/apis/ServiceTile'
 import { CopyActions } from '@/components/product/CopyField'
 import { CheckRow, HealthChecks } from '@/components/product/HealthChecks'
 import { LatencyStrip } from '@/components/product/LatencyStrip'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { useHealthHistory } from '@/hooks/useHealth'
 import { formatLatency } from '@/lib/format'
 import type { HealthResult, ServiceId } from '@/lib/health'
@@ -114,72 +115,76 @@ export function StatusTable({
   className,
 }: StatusTableProps) {
   return (
-    <RateAccordion value={open} onValueChange={onOpenChange} className={className}>
-      <div
-        aria-hidden="true"
-        className={cn(
-          rowGrid,
-          'hidden border-b border-st-secondary bg-sf-secondary/40 px-8 py-2.5 font-mono text-label tracking-[0.08em] text-tx-tertiary uppercase xl:grid',
+    // The latency bars carry tooltips; the provider lives here so the tooltip
+    // code ships with this page rather than the main bundle.
+    <TooltipProvider delayDuration={200}>
+      <RateAccordion value={open} onValueChange={onOpenChange} className={className}>
+        <div
+          aria-hidden="true"
+          className={cn(
+            rowGrid,
+            'hidden border-b border-st-secondary bg-sf-secondary/40 px-8 py-2.5 font-mono text-label tracking-[0.08em] text-tx-tertiary uppercase xl:grid',
+          )}
+        >
+          <span className="col-span-2">Service</span>
+          <span>Response time · this session</span>
+          <span>Latency</span>
+          <span>Status</span>
+          <span />
+        </div>
+
+        {entries.length === 0 && (
+          <p className="flex min-h-20 items-center justify-center gap-2.5 px-6 py-6 text-body text-tx-secondary">
+            <BadgeCheck aria-hidden="true" strokeWidth={1.5} className="size-5 text-green-600" />
+            {emptyLabel}
+          </p>
         )}
-      >
-        <span className="col-span-2">Service</span>
-        <span>Response time · this session</span>
-        <span>Latency</span>
-        <span>Status</span>
-        <span />
-      </div>
 
-      {entries.length === 0 && (
-        <p className="flex min-h-20 items-center justify-center gap-2.5 px-6 py-6 text-body text-tx-secondary">
-          <BadgeCheck aria-hidden="true" strokeWidth={1.5} className="size-5 text-green-600" />
-          {emptyLabel}
-        </p>
-      )}
-
-      {entries.map((entry) => {
-        const result = results[entry.id]
-        const status = result?.status ?? 'checking'
-        return (
-          <RateItem key={entry.id} id={entry.id}>
-            <RateTrigger className={rowGrid}>
-              <span className="col-start-1 row-start-1">
-                <ServiceTile id={entry.id} size={40} />
-              </span>
-              <span className="col-start-2 row-start-1 flex min-w-0 flex-col">
-                <span
-                  className={cn(
-                    'truncate text-body leading-snug font-medium tracking-[-0.01em] md:text-lg',
-                    openTone,
-                  )}
-                >
-                  {entry.name}
+        {entries.map((entry) => {
+          const result = results[entry.id]
+          const status = result?.status ?? 'checking'
+          return (
+            <RateItem key={entry.id} id={entry.id}>
+              <RateTrigger className={rowGrid}>
+                <span className="col-start-1 row-start-1">
+                  <ServiceTile id={entry.id} size={40} />
                 </span>
-                <code className="truncate font-mono text-[13px] leading-5 text-tx-tertiary">
-                  {entry.healthPath}
-                </code>
-              </span>
-              <StatusChip
-                status={status}
-                size="sm"
-                className="col-start-3 row-start-1 hidden justify-self-end sm:inline-flex xl:col-start-5 xl:justify-self-start"
-              />
-              <RateChevron className="col-start-3 row-start-1 justify-self-end sm:col-start-4 xl:col-start-6" />
-              <span className="col-span-full row-start-2 flex min-w-0 items-center gap-3 sm:col-start-2 sm:col-end-[-1] xl:contents">
-                <StatusChip status={status} size="sm" className="sm:hidden" />
-                <LatencyStrip
-                  id={entry.id}
-                  decorative
-                  className="max-w-52 flex-1 xl:col-start-3 xl:row-start-1 xl:max-w-none"
+                <span className="col-start-2 row-start-1 flex min-w-0 flex-col">
+                  <span
+                    className={cn(
+                      'truncate text-body leading-snug font-medium tracking-[-0.01em] md:text-lg',
+                      openTone,
+                    )}
+                  >
+                    {entry.name}
+                  </span>
+                  <code className="truncate font-mono text-[13px] leading-5 text-tx-tertiary">
+                    {entry.healthPath}
+                  </code>
+                </span>
+                <StatusChip
+                  status={status}
+                  size="sm"
+                  className="col-start-3 row-start-1 hidden justify-self-end sm:inline-flex xl:col-start-5 xl:justify-self-start"
                 />
-                <Latency result={result} className="xl:col-start-4 xl:row-start-1" />
-              </span>
-            </RateTrigger>
-            <RateContent>
-              <Panel entry={entry} result={result} />
-            </RateContent>
-          </RateItem>
-        )
-      })}
-    </RateAccordion>
+                <RateChevron className="col-start-3 row-start-1 justify-self-end sm:col-start-4 xl:col-start-6" />
+                <span className="col-span-full row-start-2 flex min-w-0 items-center gap-3 sm:col-start-2 sm:col-end-[-1] xl:contents">
+                  <StatusChip status={status} size="sm" className="sm:hidden" />
+                  <LatencyStrip
+                    id={entry.id}
+                    decorative
+                    className="max-w-52 flex-1 xl:col-start-3 xl:row-start-1 xl:max-w-none"
+                  />
+                  <Latency result={result} className="xl:col-start-4 xl:row-start-1" />
+                </span>
+              </RateTrigger>
+              <RateContent>
+                <Panel entry={entry} result={result} />
+              </RateContent>
+            </RateItem>
+          )
+        })}
+      </RateAccordion>
+    </TooltipProvider>
   )
 }
