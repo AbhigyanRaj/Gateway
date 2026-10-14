@@ -1,0 +1,15 @@
+{
+  "name": "ET AI Labs",
+  "short_name": "ET AI Labs",
+  "description": "Every ET AI product, one front door.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#fcfcfc",
+  "theme_color": "#fcfcfc",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
