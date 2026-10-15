@@ -1,7 +1,9 @@
 import {
   AudioLines,
+  FileCheck2,
   BotMessageSquare,
   Magnet,
+  Newspaper,
   ScanEye,
   SquareKanban,
   WandSparkles,
@@ -21,4 +23,6 @@ export const productIcons: Record<ProductId, LucideIcon> = {
   leadhub: Magnet,
   tcc: ScanEye,
   marathon: BotMessageSquare,
+  editorialcrm: Newspaper,
+  editorialgate: FileCheck2,
 }

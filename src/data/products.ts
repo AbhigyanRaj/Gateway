@@ -1,7 +1,8 @@
 import { productUrl } from '@/config/site'
 
-export type ProductId = 'studio' | 'voice' | 'minicrm' | 'leadhub' | 'tcc' | 'marathon'
-export type Accent = 'orange' | 'indigo' | 'yellow' | 'red' | 'green' | 'pink'
+export type ProductId =
+  'studio' | 'voice' | 'minicrm' | 'leadhub' | 'tcc' | 'marathon' | 'editorialcrm' | 'editorialgate'
+export type Accent = 'orange' | 'indigo' | 'yellow' | 'red' | 'green' | 'pink' | 'violet' | 'teal'
 
 export interface Product {
   id: ProductId
@@ -184,6 +185,44 @@ export const products: readonly Product[] = [
     signInRequired: false,
     publicApi: true,
   },
+  {
+    id: 'editorialcrm',
+    name: 'Editorial CRM',
+    shortName: 'Editorial CRM',
+    tagline: 'Build an audience and send, from one console',
+    description:
+      'The editorial team’s CRM. Build an audience from your contacts, review it and send, with sign-in by role.',
+    capabilities: ['Audience building', 'Review before sending', 'Role-based team sign-in'],
+    kind: 'console',
+    accent: 'violet',
+    consoleUrl: productUrl('/editorialcrm/'),
+    consoleLabel: 'Open Editorial CRM',
+    apiBase: productUrl('/editorialcrm/api/'),
+    healthPath: '/editorialcrm/api/health',
+    healthKind: 'json',
+    authRequired: false,
+    signInRequired: true,
+    publicApi: false,
+  },
+  {
+    id: 'editorialgate',
+    name: 'Editorial Gate',
+    shortName: 'Editorial Gate',
+    tagline: 'Check articles against editorial standards before they publish',
+    description:
+      'Upload an article, or a batch of them, and get a scored report with a verdict for each. Share a writer’s view, or export a PDF or a spreadsheet summary.',
+    capabilities: ['Article scoring and verdicts', 'Batch uploads', 'PDF and spreadsheet reports'],
+    kind: 'console',
+    accent: 'teal',
+    consoleUrl: productUrl('/editorial-gate/'),
+    consoleLabel: 'Open Editorial Gate',
+    apiBase: productUrl('/editorial-gate/v1/'),
+    healthPath: '/editorial-gate/healthz',
+    healthKind: 'json',
+    authRequired: false,
+    signInRequired: false,
+    publicApi: true,
+  },
 ] as const
 
 export const productById = Object.fromEntries(products.map((p) => [p.id, p])) as Record<
@@ -290,5 +329,29 @@ export const accentStyles: Record<
     gradientLight: 'bg-(image:--gradient-pink-light)',
     dot: 'bg-pink-400',
     hex: '#d4508e',
+  },
+  violet: {
+    text: 'text-violet-700',
+    textStrong: 'text-violet-900',
+    icon: 'text-violet-600',
+    bgSoft: 'bg-violet-50',
+    border: 'border-violet-200',
+    hoverIcon: 'group-hover:text-hover-violet',
+    gradient: 'bg-(image:--gradient-violet)',
+    gradientLight: 'bg-(image:--gradient-violet-light)',
+    dot: 'bg-violet-600',
+    hex: '#7a52e8',
+  },
+  teal: {
+    text: 'text-teal-700',
+    textStrong: 'text-teal-900',
+    icon: 'text-teal-600',
+    bgSoft: 'bg-teal-50',
+    border: 'border-teal-200',
+    hoverIcon: 'group-hover:text-hover-teal',
+    gradient: 'bg-(image:--gradient-teal)',
+    gradientLight: 'bg-(image:--gradient-teal-light)',
+    dot: 'bg-teal-600',
+    hex: '#27b8a4',
   },
 }

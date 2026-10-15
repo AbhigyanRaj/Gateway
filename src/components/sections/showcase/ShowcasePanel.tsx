@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { productArt, showcaseStudio } from '@/assets/art'
 import { ProductTile } from '@/components/product/ProductTile'
 import { Button } from '@/components/ui/button'
-import type { Product } from '@/data/products'
+import { accentStyles, type Product, type ProductId } from '@/data/products'
 
 import { ShowcaseStatus } from './ShowcaseStatus'
 
@@ -60,19 +60,32 @@ function PanelActions({ product }: { product: Product }) {
 }
 
 /** Product art in an 8px translucent glass mat, with a calm API-path chip. */
+/** Panel art for products that have it; newer products get an accent panel with their tile. */
+const panelArt = productArt as Partial<Record<ProductId, string>>
+
 function PanelMedia({ product }: { product: Product }) {
   const isStudio = product.id === 'studio'
+  const src = isStudio ? showcaseStudio : panelArt[product.id]
   return (
     <div className="relative rounded-2xl bg-white/50 p-1.5 shadow-card ring-1 ring-white/60 md:p-2">
-      <img
-        src={isStudio ? showcaseStudio : productArt[product.id]}
-        alt=""
-        width={isStudio ? 1920 : 1600}
-        height={isStudio ? 1080 : 1000}
-        loading="lazy"
-        decoding="async"
-        className="aspect-[16/10] w-full rounded-xl bg-sf-secondary object-cover"
-      />
+      {src ? (
+        <img
+          src={src}
+          alt=""
+          width={isStudio ? 1920 : 1600}
+          height={isStudio ? 1080 : 1000}
+          loading="lazy"
+          decoding="async"
+          className="aspect-[16/10] w-full rounded-xl bg-sf-secondary object-cover"
+        />
+      ) : (
+        <div
+          aria-hidden="true"
+          className={`flex aspect-[16/10] w-full items-center justify-center rounded-xl ${accentStyles[product.accent].gradientLight}`}
+        >
+          <ProductTile id={product.id} size={120} />
+        </div>
+      )}
       <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-white/75 px-3 py-1.5 font-mono text-[12px] leading-4 text-tx-secondary shadow-kit-sm ring-1 ring-white/80 backdrop-blur-md md:bottom-6 md:left-6">
         <Braces aria-hidden="true" strokeWidth={1.5} className="size-3.5 text-tx-tertiary" />
         {apiPath(product.apiBase)}

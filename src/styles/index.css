@@ -197,6 +197,8 @@
   --color-hover-indigo: #6366f1;
   --color-hover-green: #16a34a;
   --color-hover-pink: #db2777;
+  --color-hover-violet: #7c3aed;
+  --color-hover-teal: #0d9488;
   --color-hover-yellow: #ca8a04;
   --color-hover-red: #dc2626;
 
@@ -424,6 +426,10 @@
   --gradient-red-light: linear-gradient(180deg, #fde7e2 0%, #f8d1c6 100%);
   --gradient-blue: linear-gradient(180deg, #bed2ff 0%, #393cc1 100%);
   --gradient-blue-light: linear-gradient(180deg, #f4f7ff 0%, #bed2ff 100%);
+  --gradient-violet: linear-gradient(180deg, #c3a9ff 0%, #4b2bc2 100%);
+  --gradient-violet-light: linear-gradient(180deg, #f3eeff 0%, #d8c8ff 100%);
+  --gradient-teal: linear-gradient(180deg, #7fe9d6 0%, #0a6b66 100%);
+  --gradient-teal-light: linear-gradient(180deg, #e6fbf7 0%, #b8f3e8 100%);
 
   --header-height: 68px;
 

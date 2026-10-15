@@ -49,32 +49,38 @@ npm run format       # prettier
 
 ## Deploy
 
-The gateway is built to be served from the **root** of `etaiprod.indiatimes.com`, next to the product apps:
+Merging to `main` puts it live on the server within about a minute. Nobody runs anything by hand.
+
+```
+push / PR ──► GitHub Actions CI (.github/workflows/ci.yml): npm ci, lint, format, type-check, build
+main moves ──► the server notices (gateway-deploy.timer, every minute)
+              ──► builds that commit itself, with the same checks
+              ──► switches the live site to it, only if everything passed
+              ──► requests /, /apis and /status; puts the previous release back if any fails
+```
+
+The server is on the internal network, so GitHub cannot push to it; it pulls instead. The tooling
+lives in the `_infra` repo (`bin/gateway-deploy`, `systemd/gateway-deploy.{service,timer}`).
+
+| Task                              | Command (on the server)                               |
+| --------------------------------- | ----------------------------------------------------- |
+| What is live                      | `/data/products/_infra/bin/gateway-deploy --status`   |
+| Release a branch now              | `/data/products/_infra/bin/gateway-deploy my-branch`  |
+| Roll back to the previous release | `/data/products/_infra/bin/gateway-deploy --rollback` |
+| Watch releases                    | `journalctl -u gateway-deploy -f`                     |
+
+Releases are kept under `/data/products/_shared/gateway-release/releases/<commit>/` (the newest
+five) and nginx serves the one `current` points at. A rollback is a symlink change.
+
+nginx (in `_infra/nginx/gateway.d/landing.conf`) owns these paths and sends every other path to its
+product:
 
 - **Health checks are same-origin.** Several health endpoints don't send CORS headers, so they can only be read from that origin.
 - **Built assets go to `/_gateway/`.** They can't collide with any product app's `/assets/`.
-- **The SPA fallback must cover only the gateway's own routes.** The product paths must keep routing to their apps.
+- **Only the gateway's own routes** (`/`, `/apis`, `/status`) fall back to the app. Product paths keep routing to their apps.
 
-Example nginx config:
-
-```nginx
-# Product apps and APIs stay exactly as they are (existing locations):
-#   /studio/  /voice/  /minicrm/  /leadhub/  /tcc/  /marathon/  /health
-
-# Gateway static build
-root /var/www/gateway/dist;
-
-location /_gateway/ {
-  expires 1y;
-  add_header Cache-Control "public, immutable";
-}
-
-# Gateway routes (and unknown paths) fall back to the SPA
-location = / { try_files /index.html =404; }
-location = /apis { try_files /index.html =404; }
-location = /status { try_files /index.html =404; }
-location / { try_files $uri /index.html; }
-```
+A new product is two edits: its entry in `src/data/products.ts`, and an nginx file in
+`_infra/nginx/gateway.d/`.
 
 ## Artwork
 

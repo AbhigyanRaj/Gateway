@@ -1,0 +1,61 @@
+name: CI
+
+# Every push and pull request is checked the same way the server checks it before it releases:
+# lockfile install, lint with warnings as errors, formatting, type-check and a production build.
+#
+# There is no deploy job on purpose. The production host is on the internal network and a
+# GitHub-hosted runner cannot reach it. Instead the host pulls: scripts/gateway-deploy (in the
+# _infra repo, run by the gateway-deploy.timer) notices a new commit on main, runs these same
+# steps itself, and only switches the live site when they pass. So "merged to main" means
+# "live within about a minute", and a red build never goes live.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # npm ci, not install: a pipeline that resolves a different tree than the lockfile records
+      # is not testing what will be released.
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formatting
+        run: npm run format:check
+
+      # tsc -b then vite build; the postbuild step makes dist/ world-readable for nginx.
+      - name: Type-check and build
+        run: npm run build
+
+      - name: Check the build
+        run: |
+          set -euo pipefail
+          test -s dist/index.html
+          grep -q '/_gateway/' dist/index.html
+          ls dist/_gateway/*.js >/dev/null
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gateway-dist
+          path: dist
+          retention-days: 7
