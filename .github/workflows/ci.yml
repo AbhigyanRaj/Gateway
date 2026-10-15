@@ -9,9 +9,12 @@ name: CI
 # steps itself, and only switches the live site when they pass. So "merged to main" means
 # "live within about a minute", and a red build never goes live.
 on:
+  # Every branch, so a change is checked as soon as it is pushed, before anyone opens a pull request.
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
